@@ -1,10 +1,11 @@
-import {Player} from "./classes/player.ts";
-import {Position} from "./classes/position.ts";
-import type {boardColumns, boardRows} from "./classes/board.ts";
+import {Player} from "./game/entities/game/player.ts";
+import {Position} from "./game/entities/game/position.ts";
+import type {boardColumns, boardRows} from "./game/entities/game/board.ts";
 
 import './assets/style.css';
-import type {ChessPiece} from "./classes/pieces/chess-piece.ts";
-import {Gameplay} from "./classes/gameplay.ts";
+import type {ChessPiece} from "./game/entities/pieces/chess-piece.ts";
+import {Gameplay} from "./game/gameplay.ts";
+import type {Move} from "./game/entities/game/move.ts";
 
 const game = new Gameplay(new Player('white'), new Player('black'));
 
@@ -39,12 +40,11 @@ for (let r = 1; r <= 8; r++) {
 
 function renderPossibleMoves(piece: ChessPiece) {
     defaultClick();
-
-    game.getPossibleMoves(piece).forEach(pos => {
-        const ca = cases.get(pos.toString());
+    game.getPossibleMoves(piece).forEach(move => {
+        const ca = cases.get(move.to.toString());
         if (ca) {
             ca.classList.add('possible-move');
-            ca.onclick = () => movePiece(piece, pos);
+            ca.onclick = () => movePiece(move);
         }
     })
 }
@@ -55,9 +55,16 @@ function render() {
         let piece = game.getPieceFromPosition(Position.fromString(pos));
         if (piece) {
             p.classList.add('piece');
-            p.classList.add(piece.color === 'white' ? 'piece-white' : 'piece-black');
+            if (piece.color === 'white') {
+                p.classList.remove('piece-black');
+                p.classList.add('piece-white');
+            } else {
+                p.classList.remove('piece-white');
+                p.classList.add('piece-black');
+            }
             p.onclick = () => renderPossibleMoves(piece)
         } else {
+            p.classList.remove('piece');
             p.onclick = () => defaultClick();
         }
     })
@@ -65,13 +72,16 @@ function render() {
 
 function defaultClick() {
     cases.forEach((p) => {
-        p.classList.remove('possible-move');
+        if (p.classList.contains('possible-move')) {
+            p.classList.remove('possible-move');
+            render();
+        }
     })
 }
 
-function movePiece(piece: ChessPiece, pos: Position) {
+function movePiece(move: Move) {
     defaultClick();
-    game.play(piece, pos);
+    game.play(move);
     render();
 }
 

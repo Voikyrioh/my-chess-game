@@ -1,5 +1,5 @@
 import './assets/style.css';
-import {Game} from "./game.ts";
+import {Game} from "./engine/game.ts";
 
 async function main() {
     const game = new Game(document.getElementById('app') as HTMLDivElement);

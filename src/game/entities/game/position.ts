@@ -4,6 +4,19 @@ export class Position {
     public column: boardColumns;
     public row: boardRows;
 
+    static convertColumn(column: boardColumns): number {
+        return column.charCodeAt(0) - 'a'.charCodeAt(0);
+    }
+
+    static columnFromNumber(column: number): boardColumns {
+        const col = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'][column - 1];
+        if (!col) {
+            throw new Error(`Invalid column: ${column}`);
+        }
+
+        return col as boardColumns;
+    }
+
     public toString(): string {
         return `${this.column}${this.row}`;
     }

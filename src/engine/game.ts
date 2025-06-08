@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import type { PerspectiveCamera, Scene, WebGLRenderer} from "three";
 
-import skybox from "./assets/skybox.jpg?url";
-import assets from "./classes/assets.ts";
+import skybox from "../assets/skybox.jpg?url";
+import assets from "./assets.ts";
 
 export class Game {
     #camera: PerspectiveCamera;

@@ -1,11 +1,11 @@
-import type {ChessPiece} from "./pieces/chess-piece.ts";
+import type {ChessPiece} from "../pieces/chess-piece.ts";
 import type {Position} from "./position.ts";
-import {Pawn} from "./pieces/pawn.ts";
-import {Rook} from "./pieces/rook.ts";
-import {Knight} from "./pieces/knight.ts";
-import {Bishop} from "./pieces/bishop.ts";
-import {Queen} from "./pieces/queen.ts";
-import {King} from "./pieces/king.ts";
+import {Pawn} from "../pieces/pawn.ts";
+import {Rook} from "../pieces/rook.ts";
+import {Knight} from "../pieces/knight.ts";
+import {Bishop} from "../pieces/bishop.ts";
+import {Queen} from "../pieces/queen.ts";
+import {King} from "../pieces/king.ts";
 
 export class Player {
     #pieces: Map<Position, ChessPiece> = new Map();
