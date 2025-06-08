@@ -5,11 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "ci": "tsc",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "mocha"
   },
   "devDependencies": {
+    "@types/chai": "^5.2.2",
+    "@types/mocha": "^10.0.10",
     "@types/three": "^0.176.0",
+    "chai": "^5.2.0",
+    "mocha": "^11.5.0",
+    "tsx": "^4.19.4",
     "typescript": "~5.8.3",
     "vite": "^6.3.5"
   },

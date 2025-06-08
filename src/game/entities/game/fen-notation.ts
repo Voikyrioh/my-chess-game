@@ -17,8 +17,17 @@ interface Fen {
     white_plays: number;
     black_plays: number;
 }
+type fenErrors = "FEN_ERROR" | "INVALID_FEN_STRING" | "INVALID_ROWS";
+export class FenError extends Error {
+    name: string = 'FEN_ERROR';
+    readonly type: fenErrors = 'FEN_ERROR';
+    constructor(errorType: fenErrors, msg: string) {
+        super(msg);
+        this.type = errorType;
+    }
+}
 
-const FEN_REGEX = /^(?<rows>(?:(?:[1-8rnbqkpRNBQKP])+\/){7}[1-8rnbqkpRNBQKP]+) (?<traitTo>w|b) (?<castles>K?Q?k?q?) (?<en_passant>-|(?:[a-h][1-8])+) (?<white_plays>\d+) (?<black_plays>\d+)$/gm
+const FEN_REGEX = /^(?<rows>(?:(?:[1-8rnbqkpRNBQKP])+\/){7}[1-8rnbqkpRNBQKP]+) (?<trait_to>w|b) ((?<castles>K?Q?k?q?) )?(?<en_passant>-|(?:[a-h][1-8])+) (?<white_plays>\d+) (?<black_plays>\d+)$/gm
 
 export class FenNotation {
     readonly fenString: string = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
@@ -39,10 +48,12 @@ export class FenNotation {
             return fen ;
         }
 
-        throw new Error('Invalid FEN string');
+        throw new FenError('INVALID_FEN_STRING' ,'Invalid FEN string');
     }
 
     private rowsValidations(fen: Fen) {
+        const kings = fen.rows.split('').filter(c => c==='k' || c==='K');
+        if (kings.length !== 2 || !(kings.includes('k') && kings.includes('K'))) throw new FenError("INVALID_ROWS", 'should have one king per side');
         const fenRows = fen.rows.split('/');
         for (const row of fenRows) {
             let columns = 0;
@@ -54,7 +65,7 @@ export class FenNotation {
                 }
             });
 
-            if (columns !== 8) throw new Error('Invalid FEN string');
+            if (columns !== 8) throw new FenError("INVALID_ROWS", 'Too many columns in rows');
         }
     }
 
@@ -72,7 +83,7 @@ export class FenNotation {
             case 'p': return new Pawn(char === 'P' ? "white" : "black", pos);
             case 'Q':
             case 'q': return new Queen(char === 'Q' ? "white" : "black", pos);
-            default: throw new Error('Invalid FEN string');
+            default: throw new FenError('INVALID_ROWS' ,'Invalid char in rows');
         }
     }
 
