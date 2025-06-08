@@ -1,4 +1,3 @@
-import {Player} from "./game/entities/game/player.ts";
 import {Position} from "./game/entities/game/position.ts";
 import type {boardColumns, boardRows} from "./game/entities/game/board.ts";
 
@@ -7,7 +6,9 @@ import type {ChessPiece} from "./game/entities/pieces/chess-piece.ts";
 import {Gameplay} from "./game/gameplay.ts";
 import type {Move} from "./game/entities/game/move.ts";
 
-const game = new Gameplay(new Player('white'), new Player('black'));
+
+const fenUrl = new URLSearchParams(document.location.search).get('fen');
+const game = new Gameplay(fenUrl ?? undefined);
 
 function getBoardChessChar(pos: string): string {
     const piece = game.getPieceFromPosition(Position.fromString(pos));
@@ -41,6 +42,7 @@ for (let r = 1; r <= 8; r++) {
 function renderPossibleMoves(piece: ChessPiece) {
     defaultClick();
     game.getPossibleMoves(piece).forEach(move => {
+        console.log(move);
         const ca = cases.get(move.to.toString());
         if (ca) {
             ca.classList.add('possible-move');
