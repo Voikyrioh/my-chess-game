@@ -27,7 +27,7 @@ export class FenError extends Error {
     }
 }
 
-const FEN_REGEX = /^(?<rows>(?:(?:[1-8rnbqkpRNBQKP])+\/){7}[1-8rnbqkpRNBQKP]+) (?<trait_to>w|b) ((?<castles>K?Q?k?q?) )?(?<en_passant>-|(?:[a-h][1-8])+) (?<white_plays>\d+) (?<black_plays>\d+)$/gm
+const FEN_REGEX = /^(?<rows>(?:(?:[1-8rnbqkpRNBQKP])+\/){7}[1-8rnbqkpRNBQKP]+) (?<trait_to>w|b) ((?<castles>K?Q?k?q?) )?(?<en_passant>-|(?:[a-h][1-8])+) (?<white_plays>\d+) (?<black_plays>\d+)$/;
 
 export class FenNotation {
     readonly fenString: string = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
@@ -42,10 +42,10 @@ export class FenNotation {
     }
 
     private getFenJson(fenString: string): Fen {
-        const fen = FEN_REGEX.exec(fenString)?.groups as unknown as Fen|undefined;
-        if (fen) {
-            this.rowsValidations(fen);
-            return fen ;
+        const fen = FEN_REGEX.exec(fenString);
+        if (fen && fen.groups) {
+            this.rowsValidations(fen.groups as unknown as Fen);
+            return fen.groups as unknown as Fen;
         }
 
         throw new FenError('INVALID_FEN_STRING' ,'Invalid FEN string');
