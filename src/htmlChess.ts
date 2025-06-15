@@ -5,22 +5,23 @@ import './assets/style.css';
 import type {ChessPiece} from "./game/entities/pieces/chess-piece.ts";
 import {Gameplay} from "./game/gameplay.ts";
 import type {Move} from "./game/entities/game/move.ts";
-
+import pieceAssets from './htmlPieces.ts';
 
 const fenUrl = new URLSearchParams(document.location.search).get('fen');
 const game = new Gameplay(fenUrl ?? undefined);
+let moveToPlay: Move|null = null;
 
 function getBoardChessChar(pos: string): string|null {
     const piece = game.getPieceFromPosition(Position.fromString(pos));
 
     if (!piece) return '';
     switch (piece.type) {
-        case 'pawn': return '♟';
-        case 'rook': return '♜';
-        case 'knight': return '♞';
-        case 'bishop': return '♝';
-        case 'queen': return '♛';
-        case 'king': return '♚';
+        case 'pawn': return pieceAssets[piece.color].pawn;
+        case 'rook': return pieceAssets[piece.color].rook;
+        case 'knight': return pieceAssets[piece.color].knight;
+        case 'bishop': return pieceAssets[piece.color].bishop;
+        case 'queen': return pieceAssets[piece.color].queen;
+        case 'king': return pieceAssets[piece.color].king;
         default: return null;
     }
 }
@@ -45,17 +46,22 @@ function renderPossibleMoves(piece: ChessPiece) {
         const ca = cases.get(move.to.toString());
         if (ca) {
             ca.classList.add('possible-move');
-            ca.onclick = () => movePiece(move);
+            ca.onclick = () => moveToPlay = move;
         }
     })
 }
 
 function render() {
     cases.forEach((p, pos) => {
+        p.childNodes.forEach(c => {c.remove()})
         const piece = getBoardChessChar(pos);
         if (piece) {
             const pieceElement = document.createElement('div');
-            pieceElement.textContent = piece;
+            const pieceAsset = document.createElement('img');
+            const boardPiece = game.getPieceFromPosition(Position.fromString(pos))!;
+            pieceAsset.alt = `${boardPiece.color} ${boardPiece.type}`;
+            pieceAsset.src = piece;
+            pieceElement.appendChild(pieceAsset);
             let gamePiece = game.getPieceFromPosition(Position.fromString(pos));
             if (gamePiece) {
                 pieceElement.classList.add('piece');
@@ -67,31 +73,35 @@ function render() {
                     pieceElement.classList.add('piece-black');
                 }
                 pieceElement.draggable = true;
-                pieceElement.ondragstart = () => {renderPossibleMoves(gamePiece)}
+                pieceElement.ondragend = canDrop;
+                pieceElement.ondragstart = () => {
+                    moveToPlay = null;
+                    renderPossibleMoves(gamePiece)
+                }
             } else {
-                pieceElement.classList.remove('piece');
-                pieceElement.draggable = false;
-                pieceElement.ondragstart = () => defaultClick();
+                pieceElement.remove()
             }
-            pieceElement.ondrop = canDrop;
             p.appendChild(pieceElement);
-        } else {
-            p.innerHTML = '';
-            p.draggable = false;
-            p.ondragstart = () => defaultClick();
         }
     })
 }
 
-function canDrop(e: DragEvent) {
-    console.log("event:", e);
+function canDrop(event: DragEvent) {
+    const moveTarget = document.elementFromPoint(event.x, event.y) as HTMLDivElement;
+    if (moveTarget) moveTarget.click();
+    if (moveToPlay) {
+        movePiece(moveToPlay);
+    }
+
+    defaultClick();
+    render();
 }
 
 function defaultClick() {
     cases.forEach((p) => {
         if (p.classList.contains('possible-move')) {
             p.classList.remove('possible-move');
-            render();
+            p.onclick = null;
         }
     })
 }

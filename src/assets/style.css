@@ -31,47 +31,49 @@
         user-select: none;
         position: relative;
         &.black {
-            background-color: #3a291b;
+            background-color: #5e4f48;
         }
         &.white {
-            background-color: #b79e8a;
+            background-color: #ffecd4;
         }
-        &.piece {
+        .piece {
             cursor: grab;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            img {
+                width: 75%;
+                height: 75%;
+                align-self: center;
+                margin-top: 10px;
+            }
         }
-        &.piece.piece-white {
-            color: #ddd;
-            -webkit-text-stroke: 1px #222;
-        }
-        &.piece.piece-black {
-            color: #222;
-            -webkit-text-stroke: 1px #ddd;
-        }
-        &.piece:active {
+        .piece:active {
             cursor: grabbing;
         }
         &.possible-move:after {
-            background-color: #166500;
+            background-color: rgb(212, 255, 212);
             content: '';
             position: absolute;
-            width: 50%;
-            height: 50%;
+            width: 20%;
+            height: 20%;
+            border-radius: 50%;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            border-radius: 50%;
             z-index: 1;
         }
-        &.possible-move.piece:after {
-            background-color: #ff0000;
-            content: '';
+        &.possible-move:has(.piece):after {
+            background: none;
+            border-radius: 100%;
+            border: rgb(255, 51, 82) 7px solid;
+            font-size: 100%;
             position: absolute;
-            width: 50%;
-            height: 50%;
+            width: 75%;
+            height: 75%;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            border-radius: 50%;
             z-index: 1;
         }
     }
