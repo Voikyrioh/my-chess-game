@@ -19,12 +19,7 @@ class SimulatedBoard extends Board {
         }
         this.$history.push(move);
 
-        console.log(this.$board.get(move.from.toString()));
-        console.log(this.$board.get(move.to.toString()));
         this.$calculateBoardState();
-        console.log(this.$board.get(move.from.toString()));
-        console.log(this.$board.get(move.to.toString()));
-        console.log(this.$check);
     }
 }
 

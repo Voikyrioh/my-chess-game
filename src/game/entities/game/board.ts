@@ -10,6 +10,7 @@ export class Board {
     $board: Map<string, BoardSquare>;
     $history: Array<Move> = [];
     $check: 'white'|'black'|null = null;
+    $checkedBy: Position[] = [];
 
     protected constructor(board: Map<string, BoardSquare> ) {
         this.$board = board;
@@ -57,9 +58,11 @@ export class Board {
                 })
             }
         })
+        this.$check = null;
         this.getKingsSquares().forEach(square => {
             if (square.menacedBy.filter(piece => piece.color !== square.occupiedBy!.color).length > 0) {
                 this.$check = square.occupiedBy!.color;
+                this.$checkedBy = square.menacedBy.filter(piece => piece.color !== square.occupiedBy!.color).map(piece => piece.position)
             }
         })
     }

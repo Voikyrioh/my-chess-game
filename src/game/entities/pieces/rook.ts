@@ -15,7 +15,7 @@ export class Rook extends ChessPiece {
             ...this.$getDirectionalMoves(0, -1, board)
         ]
             .map((position) => {
-                console.log(`rook checking ${position.toString()} : `, board.getFromPosition(position));
+                //console.log(`rook checking ${position.toString()} : `, board.getFromPosition(position));
                 return position && this.$createMovement(board, position);
             })
             .filter(p => p !== null)
