@@ -72,3 +72,49 @@
         }
     }
 }
+
+
+@keyframes modal {
+    from {
+        top: 0;
+    }
+    to {
+        top: calc(50% - 60px);
+    }
+}
+
+.modal {
+    background-color: rgb(30, 38, 55);
+    min-height: 120px;
+    min-width: 180px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    top: calc(50% - 60px);
+    animation: modal 0.4s ease-in;
+    border: none;
+    box-shadow: #1c1c1c 5px 5px 5px;
+    border-radius: 4px;
+    >* {
+        color: white;
+        font-family: Sour_Gummy, sans-serif;
+        margin: 0 auto;
+    }
+    h3 {
+        font-size: 1.4rem;
+    }
+    span {
+        font-size: 1rem;
+    }
+    button {
+        background-color: rgb(58, 67, 91);
+        border: 2px rgba(0,0,0,0.3) solid;
+        padding: 8px 16px;
+        &:hover {
+            cursor: pointer;
+            background-color: rgb(30, 38, 55);
+        }
+    }
+}
+

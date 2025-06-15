@@ -11,6 +11,7 @@ export class Gameplay {
     #playerBlack: Player;
     #board: Board;
     #turn: Player;
+    #checkmate: boolean = false;
 
     constructor(fenString?: string) {
         const fen = new FenNotation(fenString);
@@ -26,7 +27,6 @@ export class Gameplay {
 
     #isPiecePlayable(chessPiece: ChessPiece): boolean {
         if (chessPiece.color !== this.#turn.type) return false;
-        if (this.#turn.isChecked) return false;
         return true;
     }
 
@@ -37,6 +37,18 @@ export class Gameplay {
                 return;
             }
             this.#board.executeMove(move);
+            if (this.#board.check) {
+                const possibleMoves =[...this.#board.getPlayerPieces(this.#board.check).values()]
+                    .map(piece => piece.getPossibleMoves(this.#board)
+                        .filter(move => simulateMove(this.#board, move).check !== this.#board.check)
+                    )
+                    .flat();
+                console.log("moves: ", possibleMoves);
+                if (!possibleMoves.length) {
+                    this.#checkmate = true;
+                }
+            }
+
             this.#turn = this.#turn === this.#playerWhite ? this.#playerBlack : this.#playerWhite;
         } else {
             console.error('not playable', {
@@ -48,14 +60,23 @@ export class Gameplay {
         }
     }
 
+    get checkmate(): boolean {
+        return this.#checkmate;
+    }
+
     getPieceFromPosition(position: Position) {
         return this.#board.getFromPosition(position);
     }
 
     getPossibleMoves(piece: ChessPiece): PieceMovements {
+        if (this.#checkmate) return [];
         if (piece.color !== this.#turn.type) return [];
         return piece.getPossibleMoves(this.#board).filter(move => {
             return simulateMove(this.#board, move).check !== this.#turn.type
         });
+    }
+
+    getCheck() {
+        return this.#board.check
     }
 }

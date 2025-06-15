@@ -10,6 +10,7 @@ import pieceAssets from './html-pieces-assets.ts';
 const fenUrl = new URLSearchParams(document.location.search).get('fen');
 const game = new Gameplay(fenUrl ?? undefined);
 const cases = new Map<string, HTMLDivElement>();
+let checkmateModal: HTMLDialogElement;
 let moveToPlay: Move|null = null;
 
 function getBoardChessChar(pos: string): string|null {
@@ -71,6 +72,26 @@ function render() {
             p.appendChild(pieceElement);
         }
     })
+    if (game.checkmate && !checkmateModal) {
+        openCheckmateModal();
+    }
+}
+
+function openCheckmateModal() {
+    checkmateModal = document.createElement('dialog');
+    checkmateModal.classList.add('modal');
+    const title = document.createElement('h3')
+    title.innerText = `Echec et mat`;
+    const text = document.createElement('span')
+    text.innerText = `Les ${game.getCheck() === 'white' ? 'Noirs' : 'Blancs'} gagnent !`
+    const closeBtn = document.createElement('button');
+    closeBtn.innerText = 'Ok';
+    closeBtn.onclick = () => checkmateModal.remove();
+    document.body.appendChild(checkmateModal);
+    checkmateModal.appendChild(title);
+    checkmateModal.appendChild(text);
+    checkmateModal.appendChild(closeBtn);
+    checkmateModal.show();
 }
 
 function canDrop(event: DragEvent) {
