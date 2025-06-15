@@ -1,4 +1,4 @@
-import './assets/style.css';
+import './assets/html-chess.css';
 import {Game} from "./engine/game.ts";
 
 async function main() {
@@ -6,4 +6,6 @@ async function main() {
     await game.init();
 }
 
-main().catch(console.error);
+export function startGame() {
+    main().catch(console.error);
+}

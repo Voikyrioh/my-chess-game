@@ -1,14 +1,15 @@
 import {Position} from "./game/entities/game/position.ts";
 import type {boardColumns, boardRows} from "./game/entities/game/board.ts";
 
-import './assets/style.css';
+import './assets/html-chess.css';
 import type {ChessPiece} from "./game/entities/pieces/chess-piece.ts";
 import {Gameplay} from "./game/gameplay.ts";
 import type {Move} from "./game/entities/game/move.ts";
-import pieceAssets from './htmlPieces.ts';
+import pieceAssets from './html-pieces-assets.ts';
 
 const fenUrl = new URLSearchParams(document.location.search).get('fen');
 const game = new Gameplay(fenUrl ?? undefined);
+const cases = new Map<string, HTMLDivElement>();
 let moveToPlay: Move|null = null;
 
 function getBoardChessChar(pos: string): string|null {
@@ -23,20 +24,6 @@ function getBoardChessChar(pos: string): string|null {
         case 'queen': return pieceAssets[piece.color].queen;
         case 'king': return pieceAssets[piece.color].king;
         default: return null;
-    }
-}
-
-const app = document.getElementById('app') as HTMLDivElement;
-const cases = new Map<string, HTMLDivElement>();
-let colRefs = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-for (let r = 1; r <= 8; r++) {
-    for (let c = 1; c <= 8; c++) {
-        const ca = document.createElement('div');
-        ca.classList.add('case');
-        ca.classList.add((r + c) % 2 === 0 ? 'white' : 'black');
-        ca.id = `${r}${colRefs[c - 1]}`;
-        cases.set(new Position(colRefs[c-1] as boardColumns, r as boardRows).toString(), ca);
-        app.appendChild(ca);
     }
 }
 
@@ -112,4 +99,19 @@ function movePiece(move: Move) {
     render();
 }
 
-render();
+export function startGame() {
+    const app = document.getElementById('app') as HTMLDivElement;
+    const colRefs = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+    for (let r = 1; r <= 8; r++) {
+        for (let c = 1; c <= 8; c++) {
+            const ca = document.createElement('div');
+            ca.classList.add('case');
+            ca.classList.add((r + c) % 2 === 0 ? 'white' : 'black');
+            ca.id = `${r}${colRefs[c - 1]}`;
+            cases.set(new Position(colRefs[c-1] as boardColumns, r as boardRows).toString(), ca);
+            app.appendChild(ca);
+        }
+    }
+
+    render();
+}

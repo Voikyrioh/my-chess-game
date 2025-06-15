@@ -3,11 +3,42 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./src/assets/style.css">
     <title>ChessGame</title>
   </head>
   <body>
+    <aside>
+      <h1>ChessGame</h1>
+      <div id="options">
+        <div class="option">
+          <label for="gametype">Plateau en 3D (inDev)</label>
+          <div class="switch">
+            <input id="gametype" type="checkbox">
+            <span class="slider"></span>
+          </div>
+        </div>
+      </div>
+    </aside>
     <div id="app">
     </div>
-    <script type="module" src="/src/htmlChess.ts"></script>
+    <script>
+      const gameTypeSwitch = document.getElementById('gametype') ;
+      let chess3d
+      let chessHTML
+
+      import('/src/html-chess.ts').then((game) => {chessHTML = game; game.startGame()});
+      import('/src/3d-chess.ts').then((game) => {chess3d = game;});
+
+      function switchGameType(event) {
+        document.getElementById('app').innerHTML = '';
+        if(gameTypeSwitch.checked) {
+          chess3d?.startGame();
+        } else {
+          chessHTML?.startGame();
+        }
+      }
+
+      gameTypeSwitch.addEventListener('input', switchGameType);
+    </script>
   </body>
 </html>
