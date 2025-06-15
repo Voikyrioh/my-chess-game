@@ -1,15 +1,15 @@
-import w_rook from './assets/web/wrook.svg';
-import b_rook from './assets/web/brook.svg';
-import w_bishop from './assets/web/wbishop.svg';
-import b_bishop from './assets/web/bbishop.svg';
-import w_queen from './assets/web/wqueen.svg';
-import b_queen from './assets/web/bqueen.svg';
-import w_king from './assets/web/wking.svg';
-import b_king from './assets/web/bking.svg';
-import w_pawn from './assets/web/wpawn.svg';
-import b_pawn from './assets/web/bpawn.svg';
-import w_knight from './assets/web/wknight.svg';
-import b_knight from './assets/web/bknight.svg';
+import w_rook from './assets/web/chess-pieces-svg/wrook.svg';
+import b_rook from './assets/web/chess-pieces-svg/brook.svg';
+import w_bishop from './assets/web/chess-pieces-svg/wbishop.svg';
+import b_bishop from './assets/web/chess-pieces-svg/bbishop.svg';
+import w_queen from './assets/web/chess-pieces-svg/wqueen.svg';
+import b_queen from './assets/web/chess-pieces-svg/bqueen.svg';
+import w_king from './assets/web/chess-pieces-svg/wking.svg';
+import b_king from './assets/web/chess-pieces-svg/bking.svg';
+import w_pawn from './assets/web/chess-pieces-svg/wpawn.svg';
+import b_pawn from './assets/web/chess-pieces-svg/bpawn.svg';
+import w_knight from './assets/web/chess-pieces-svg/wknight.svg';
+import b_knight from './assets/web/chess-pieces-svg/bknight.svg';
 
 const pieces = {
     white: {

@@ -3,12 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="src/assets/web/chess-pieces-svg/wking.svg" />
     <link rel="stylesheet" href="./src/assets/style.css">
     <title>ChessGame</title>
   </head>
   <body>
     <aside>
-      <h1>ChessGame</h1>
+      <h1><img width="70px" height="70px" src="src/assets/web/chess-pieces-svg/wking.svg" alt="logo">ChessGame</h1>
       <div id="options">
         <div class="option">
           <label for="gametype">Plateau en 3D (inDev)</label>
@@ -18,6 +19,7 @@
           </div>
         </div>
       </div>
+      <footer></footer>
     </aside>
     <div id="app">
     </div>
@@ -29,8 +31,14 @@
       import('/src/html-chess.ts').then((game) => {chessHTML = game; game.startGame()});
       import('/src/3d-chess.ts').then((game) => {chess3d = game;});
 
+      const loader = document.createElement('img');
+      loader.classList.add('loader');
+      loader.src = './src/assets/web/loader.svg';
+      document.getElementById('app').appendChild(loader);
+
       function switchGameType(event) {
         document.getElementById('app').innerHTML = '';
+        document.getElementById('app').appendChild(loader);
         if(gameTypeSwitch.checked) {
           chess3d?.startGame();
         } else {

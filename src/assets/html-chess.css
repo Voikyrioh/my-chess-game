@@ -3,6 +3,7 @@
     padding: 0;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+
     >* {
         text-align: center;
         font-size: 5rem;
@@ -10,12 +11,15 @@
         cursor: pointer;
         user-select: none;
         position: relative;
+
         &.black {
             background-color: #5e4f48;
         }
+
         &.white {
             background-color: #ffecd4;
         }
+
         .piece {
             cursor: grab;
             display: flex;
@@ -28,9 +32,11 @@
                 margin-top: 10px;
             }
         }
+
         .piece:active {
             cursor: grabbing;
         }
+
         &.possible-move:after {
             background-color: rgb(255, 255, 255);
             content: '';
@@ -45,6 +51,7 @@
             z-index: 1;
             transition: 0.4s;
         }
+
         &.possible-move:has(.piece):after {
             background: none;
             border-radius: 100%;
@@ -59,6 +66,7 @@
             z-index: 1;
             transition: 0.4s;
         }
+
         &.possible-move:after.hovering,  &.possible-move:has(.piece):after.hovering {
             transform: scale(1.1);
         }

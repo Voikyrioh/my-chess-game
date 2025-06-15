@@ -23,8 +23,6 @@
 
 #app {
     float: right;
-    background-color: rgba(255, 255, 255, 0.8);
-    border: 1px solid black;
     margin: 0 auto;
     position: absolute;
     top: 50%;
@@ -32,40 +30,61 @@
     transform: translate(-50%, -50%);
     width: 1260px;
     height: 1260px;
+    .loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100px;
+    }
 }
 
 aside {
+    position: relative;
     float: left;
     background-color: rgb(30, 38, 55);
     height: 100vh;
-    width: 400px;
+    width: 450px;
     color: white;
-    border-right: #1c1e37 8px solid;
+    border-right: rgb(calc(30 * 0.6), calc(38 * 0.6), calc(55 * 0.6)) 2px solid;
     font-family: Sour_Gummy, sans-serif;
+
     h1 {
         text-align: center;
         font-family: Aladin, sans-serif;
         font-size: 4rem;
     }
+
     #options {
         width: calc(100% - 32px);
         padding: 16px;
         display: flex;
         flex-direction: column;
+
         .option {
             display: flex;
             flex-direction: row;
             justify-content: space-evenly;
             font-size: 1.4rem;
+
             input[type = "checkbox"] {
                 width: 24px;
                 height: 24px;
-                transition: 0.4s ease-in-out;
-                transform: rotate(0) scale(1);
+                transition: 0.2s ease-in-out;
+                transform: scale(1);
             }
-            input[type = "checkbox"]:checked {
-                transform: rotate(360deg);
+
+            input[type = "checkbox"]:active {
+                transform: scale(1.4);
             }
         }
+    }
+
+    footer {
+        width: calc(100% - 32px);
+        padding: 16px;
+        min-height: 120px;
+        background-color: rgba(0, 0, 0, 0.6);
+        bottom: 0;
+        position: absolute;
     }
 }
