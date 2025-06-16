@@ -35,6 +35,12 @@ function renderPossibleMoves(piece: ChessPiece) {
         const ca = cases.get(move.to.toString());
         if (ca) {
             ca.classList.add('possible-move');
+            if (['TAKE', 'EN_PASSANT'].includes(move.type)) {
+                ca.classList.add('take');
+            }
+            if (move.type === "CASTLING") {
+                ca.classList.add('castling');
+            }
             ca.onclick = () => moveToPlay = move;
         }
     })
@@ -150,6 +156,8 @@ function defaultClick() {
     cases.forEach((p) => {
         if (p.classList.contains('possible-move')) {
             p.classList.remove('possible-move');
+            p.classList.remove('take');
+            p.classList.remove('castling');
             p.onclick = null;
         }
     })

@@ -44,6 +44,38 @@ export class Pawn extends ChessPiece {
         }
     }
 
+    #getEnPassant(board: Board): Move[] {
+        const pieceOnRight: ChessPiece|null = this.position.add(0,1) && board.getFromPosition(this.position.add(0,1)!);
+        const pieceOnLeft: ChessPiece|null = this.position.add(0,-1) && board.getFromPosition(this.position.add(0,-1)!);
+
+        const enemyPawnOnRight: Pawn|null = pieceOnRight?.type === 'pawn' && pieceOnRight.color !== this.color ? pieceOnRight as Pawn : null;
+        const enemyPawnOnLeft: Pawn|null = pieceOnLeft?.type === 'pawn' && pieceOnLeft.color !== this.color ? pieceOnLeft as Pawn : null;
+
+        const pos: [Position | null, 'left'|'right'][] = this.color === 'white' ?
+            [
+                [enemyPawnOnRight?.canBeEnPassant ? this.position.add(-1,1) : null, 'right'],
+                [enemyPawnOnLeft?.canBeEnPassant ? this.position.add(-1,-1) : null, 'left']
+            ] :
+            [
+                [enemyPawnOnRight?.canBeEnPassant ? this.position.add(1,1) : null, 'right'],
+                [enemyPawnOnLeft?.canBeEnPassant ? this.position.add(1,-1) : null, 'left']
+            ];
+
+        return pos
+            .filter(([pos, _]) => pos !== null)
+            .map(([pos, side]) => new Move(this.position, pos!, this, "EN_PASSANT", side === 'right' ? enemyPawnOnRight! : enemyPawnOnLeft!));
+    }
+
+    moveTo(position: Position) {
+        this.isActivated = true;
+        if (Math.abs(position.row - this.position.row) === 2) {
+            this.canBeEnPassant = true;
+        } else  {
+            this.canBeEnPassant = false;
+        }
+        this.position = position;
+    }
+
     getPieceBasicMovements(board: Board): PieceMovements {
         const possibleMoves = this.color === 'white' ?
             [
@@ -74,7 +106,8 @@ export class Pawn extends ChessPiece {
     getPossibleMoves(board: Board): PieceMovements {
         return [
             ...this.getPieceBasicMovements(board),
-            ...this.getTakeMovements(board)
+            ...this.getTakeMovements(board),
+            ...this.#getEnPassant(board),
         ].map(this.#setPromotionMoves);
     }
 }

@@ -52,6 +52,10 @@ aside {
         text-align: center;
         font-family: Aladin, sans-serif;
         font-size: 4rem;
+        transform: translateX(-8px);
+        img {
+            transform: translateY(8px);
+        }
     }
 
     #options {

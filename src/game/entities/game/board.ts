@@ -49,6 +49,11 @@ export class Board {
             this.$board.get(move.to.toString())!.occupiedBy = move.target;
             move.target.moveTo(move.to);
         }
+        if (move.type === "EN_PASSANT") {
+            if(!move.target) throw new Error("Target is not defined");
+            this.$board.get(move.target.position.toString())!.occupiedBy = null
+        }
+
         this.$history.push(move);
 
         this.$calculateBoardState();

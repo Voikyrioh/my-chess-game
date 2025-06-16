@@ -49,10 +49,9 @@
             transform: translate(-50%, -50%);
             border: #1c1c1c 2px solid;
             z-index: 1;
-            transition: 0.4s;
         }
 
-        &.possible-move:has(.piece):after {
+        &.possible-move.take:after {
             background: none;
             border-radius: 100%;
             border: rgb(255, 51, 82) 7px solid;
@@ -64,11 +63,20 @@
             top: 50%;
             transform: translate(-50%, -50%);
             z-index: 1;
-            transition: 0.4s;
         }
 
-        &.possible-move:after.hovering,  &.possible-move:has(.piece):after.hovering {
-            transform: scale(1.1);
+        &.possible-move.castling:after {
+            background: none;
+            border-radius: 0;
+            border: rgb(135, 255, 110) 10px solid;
+            font-size: 100%;
+            position: absolute;
+            width: 30%;
+            height: 30%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
         }
     }
 }
