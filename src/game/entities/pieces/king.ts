@@ -4,13 +4,9 @@ import {Move} from "../game/move.ts";
 import type {Board} from "../game/board.ts";
 
 export class King extends ChessPiece {
-    static DefaultPositions = {
-        'black': [new Position('e', 8)],
-        'white': [new Position('e', 1)],
-    }
-
-    constructor(color: "white" | "black", position: Position) {
+    constructor(color: "white" | "black", position: Position, actived = true) {
         super(position, color, 'king');
+        this.isActivated = actived;
     }
 
     #checkSmallCastling(board: Board): Move | null {

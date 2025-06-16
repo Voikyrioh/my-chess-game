@@ -3,11 +3,6 @@ import {Position} from "../game/position.ts";
 import  {type Board} from "../game/board.ts";
 
 export class Queen extends ChessPiece {
-    static DefaultPositions = {
-        'black': [new Position('d', 8)],
-        'white': [new Position('d', 1)]
-    }
-
     constructor(color: "white" | "black", position: Position) {
         super(position, color, 'queen');
     }

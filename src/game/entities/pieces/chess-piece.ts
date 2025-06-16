@@ -9,7 +9,7 @@ export abstract class ChessPiece {
     static DefaultPositions: Record<'white' | 'black', Array<Position>>;
     readonly type: PieceType;
     readonly color: 'white' | 'black';
-    isActivated = false;
+    #isActivated = false;
     $canEatOnMove = true;
     position: Position;
 
@@ -17,6 +17,14 @@ export abstract class ChessPiece {
         this.type = type;
         this.color = color;
         this.position = position;
+    }
+
+    get isActivated(): boolean {
+        return this.#isActivated;
+    }
+
+    set isActivated(value: boolean) {
+        this.#isActivated = value;
     }
 
     getPossibleMoves(_: Board): PieceMovements {
