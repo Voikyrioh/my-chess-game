@@ -46,7 +46,6 @@ export class Board {
             move.target.moveTo(newPos);
         }
         if (move.promoteMovement && move.target) {
-            console.log(move.target);
             this.$board.get(move.to.toString())!.occupiedBy = move.target;
             move.target.moveTo(move.to);
         }
