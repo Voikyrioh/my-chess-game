@@ -1,0 +1,16 @@
+name: publish.yml
+on:
+  [workflow_dispatch]
+
+jobs:
+  publish_image:
+    runs-on: alpine-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: build image
+        run: docker build . -t voikyrioh/my-chess-game:latest
+      - name: publish
+        run: |
+          docker login -u voikyrioh -p ${{ secrets.DOCKER_HUB_TOKEN }}
+          docker push voikyrioh/my-chess-game:latest

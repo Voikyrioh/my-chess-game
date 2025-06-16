@@ -1,0 +1,6 @@
+services:
+  web:
+    container_name: my_chess_game
+    build: .
+    ports:
+      - "8000:80"

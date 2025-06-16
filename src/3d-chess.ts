@@ -6,6 +6,6 @@ async function main() {
     await game.init();
 }
 
-export function startGame() {
-    main().catch(console.error);
+export async function startGame() {
+    return main().catch(console.error);
 }
