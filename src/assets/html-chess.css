@@ -104,6 +104,7 @@
     border: none;
     box-shadow: #1c1c1c 5px 5px 5px;
     border-radius: 4px;
+    z-index: 11;
     >* {
         color: white;
         font-family: Sour_Gummy, sans-serif;
@@ -131,7 +132,7 @@
     width: 100px;
     display: flex;
     flex-direction: column;
-    z-index: 12;
+    z-index: 10;
     background: rgba(255, 255, 255, 1);
     padding: 8px;
     border-radius: 8px;

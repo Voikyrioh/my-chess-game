@@ -43,7 +43,6 @@ export class Gameplay {
                         .filter(move => simulateMove(this.#board, move).check !== this.#board.check)
                     )
                     .flat();
-                console.log("moves: ", possibleMoves);
                 if (!possibleMoves.length) {
                     this.#checkmate = true;
                 }
