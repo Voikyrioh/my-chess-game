@@ -169,19 +169,23 @@ function movePiece(move: Move) {
     render();
 }
 
-export function startGame() {
-    const app = document.getElementById('app') as HTMLDivElement;
-    const colRefs = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-    for (let r = 1; r <= 8; r++) {
-        for (let c = 1; c <= 8; c++) {
-            const ca = document.createElement('div');
-            ca.classList.add('case');
-            ca.classList.add((r + c) % 2 === 0 ? 'white' : 'black');
-            ca.id = `${r}${colRefs[c - 1]}`;
-            cases.set(new Position(colRefs[c-1] as boardColumns, r as boardRows).toString(), ca);
-            app.appendChild(ca);
+export async function startGame() {
+    return new Promise<void>((resolve) => {
+        const app = document.getElementById('app') as HTMLDivElement;
+        const colRefs = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+        for (let r = 1; r <= 8; r++) {
+            for (let c = 1; c <= 8; c++) {
+                const ca = document.createElement('div');
+                ca.classList.add('case');
+                ca.classList.add((r + c) % 2 === 0 ? 'white' : 'black');
+                ca.id = `${r}${colRefs[c - 1]}`;
+                cases.set(new Position(colRefs[c-1] as boardColumns, r as boardRows).toString(), ca);
+                app.appendChild(ca);
+            }
         }
-    }
 
-    render();
+        render();
+        resolve();
+    })
+
 }

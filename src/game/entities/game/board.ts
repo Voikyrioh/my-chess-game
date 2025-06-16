@@ -43,6 +43,7 @@ export class Board {
             const newPos = move.to.column === 'g' ? new Position('f', move.target.position.row) : new Position('d', move.target.position.row);
             if (!newPos) throw new Error("New position is not defined");
             this.$board.get(newPos.toString())!.occupiedBy = move.target;
+            move.target.moveTo(newPos);
         }
         if (move.promoteMovement && move.target) {
             console.log(move.target);

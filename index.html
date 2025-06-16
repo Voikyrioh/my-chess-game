@@ -23,26 +23,25 @@
     </aside>
     <div id="app">
     </div>
-    <script>
+    <script type="module">
+      import * as chessHTML from './src/html-chess.ts';
+      import * as chess3d from './src/3d-chess.ts';
+      import loaderSVG from './src/assets/web/loader.svg';
+
       const gameTypeSwitch = document.getElementById('gametype') ;
-      let chess3d
-      let chessHTML
-
-      import('/src/html-chess.ts').then((game) => {chessHTML = game; game.startGame()});
-      import('/src/3d-chess.ts').then((game) => {chess3d = game;});
-
       const loader = document.createElement('img');
       loader.classList.add('loader');
-      loader.src = './src/assets/web/loader.svg';
+      loader.src = loaderSVG;
       document.getElementById('app').appendChild(loader);
+      chessHTML.startGame().then(() => document.getElementById('app').removeChild(loader));
 
       function switchGameType(event) {
         document.getElementById('app').innerHTML = '';
         document.getElementById('app').appendChild(loader);
         if(gameTypeSwitch.checked) {
-          chess3d?.startGame();
+          chess3d?.startGame().then(() => document.getElementById('app').removeChild(loader));
         } else {
-          chessHTML?.startGame();
+          chessHTML?.startGame().then(() => document.getElementById('app').removeChild(loader));
         }
       }
 
