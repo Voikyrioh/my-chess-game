@@ -2,7 +2,7 @@ import type {ChessPiece, PieceType} from "../pieces/chess-piece.ts";
 import type {Position} from "./position.ts";
 
 
-export type PossibleMoves  = "MOVE" | "TAKE" | "EN_PASSANT" | "CASTLING" | "PROMOTION";
+export type PossibleMoves  = "MOVE" | "TAKE" | "EN_PASSANT" | "CASTLING";
 export const dictionaryPieces: Record<PieceType, string> = {
     king: "K",
     queen: "Q",
@@ -18,6 +18,7 @@ export class Move {
     public readonly piece: ChessPiece;
     public readonly type: PossibleMoves;
     public readonly target: ChessPiece | undefined;
+    public readonly promoteMovement: boolean;
 
     constructor(
         from: Position,
@@ -25,12 +26,20 @@ export class Move {
         piece: ChessPiece,
         type: PossibleMoves,
         target?: ChessPiece,
+        promoteMovement = false,
     ) {
         this.from = from;
         this.to = to;
         this.piece = piece;
         this.type = type;
         this.target = target;
+        this.promoteMovement = promoteMovement && piece.type === 'pawn';
+    }
+
+    promote(piece: ChessPiece): Move | undefined {
+        if (this.promoteMovement) {
+            return new Move(this.from, this.to, this.piece, this.type, piece, true);
+        }
     }
 
     toString() {

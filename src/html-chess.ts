@@ -6,6 +6,7 @@ import type {ChessPiece} from "./game/entities/pieces/chess-piece.ts";
 import {Gameplay} from "./game/gameplay.ts";
 import type {Move} from "./game/entities/game/move.ts";
 import pieceAssets from './html-pieces-assets.ts';
+import type {Pawn} from "./game/entities/pieces/pawn.ts";
 
 const fenUrl = new URLSearchParams(document.location.search).get('fen');
 const game = new Gameplay(fenUrl ?? undefined);
@@ -94,11 +95,51 @@ function openCheckmateModal() {
     checkmateModal.show();
 }
 
+function openPromoteDialog(x:number, y: number, color: 'white'|'black', callback: Function) {
+    const dialog = document.createElement('dialog');
+    dialog.id = 'promote-diag';
+    dialog.style.top = `calc(${y}px - ${color === "white" ? '0px' : '400px'})`;
+    dialog.style.left = `calc(${x}px - 50vw)`;
+
+    const dialogContent = ['queen', 'rook', 'knight', 'bishop'].map(p => {
+        const div = document.createElement('div')
+        const img = document.createElement('img');
+        div.classList.add('promote-btn');
+        div.onclick = () => {
+            callback(p);
+            dialog.remove();
+        };
+        img.src = pieceAssets[color][p as 'queen'|'knight'|'bishop'|'rook'];
+        div.appendChild(img);
+        return div;
+    });
+    dialogContent.forEach((elem, index) => {
+        dialog.appendChild(elem);
+        if (index !== dialogContent.length - 1) dialog.appendChild(document.createElement('hr'));
+    })
+
+    document.body.appendChild(dialog);
+    dialog.show();
+}
+
+function promote(x: number, y: number, piece: Pawn,  ): Promise<ChessPiece> {
+    return new Promise<ChessPiece>((resolve) => {
+        openPromoteDialog(x, y, piece.color, (value: 'queen'|'knight'|'bishop'|'rook') => {
+            resolve(piece.promote(value))
+        });
+    })
+}
+
 function canDrop(event: DragEvent) {
     const moveTarget = document.elementFromPoint(event.x, event.y) as HTMLDivElement;
     if (moveTarget) moveTarget.click();
     if (moveToPlay) {
-        movePiece(moveToPlay);
+        if (moveToPlay.promoteMovement && moveToPlay.piece.type === 'pawn') {
+            promote(event.x, event.y, moveToPlay.piece as Pawn).then(newPiece => {
+                movePiece(moveToPlay!.promote(newPiece) ?? moveToPlay!);
+            })
+        } else movePiece(moveToPlay);
+
     }
 
     defaultClick();

@@ -44,6 +44,11 @@ export class Board {
             if (!newPos) throw new Error("New position is not defined");
             this.$board.get(newPos.toString())!.occupiedBy = move.target;
         }
+        if (move.promoteMovement && move.target) {
+            console.log(move.target);
+            this.$board.get(move.to.toString())!.occupiedBy = move.target;
+            move.target.moveTo(move.to);
+        }
         this.$history.push(move);
 
         this.$calculateBoardState();
