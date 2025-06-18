@@ -1,0 +1,89 @@
+#app {
+    margin: 0 auto;
+    width: 100vw;
+    height: 100vw;
+    max-width: calc(100vh - 240px);
+    max-height: calc(100vh - 240px);
+    .loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100px;
+    }
+}
+
+aside {
+    position: relative;
+    min-height: 160px;
+    width: 100vw;
+
+    h1 {
+        margin-top: 0;
+        margin-left: 32px;
+    }
+
+    .menu-display {
+        display: block;
+        position: absolute;
+        right: 32px;
+        top: 32px;
+        img {
+            width: 48px;
+            height: 48px;
+            transition: transform 0.2s ease-in-out;
+        }
+        &:active {
+            image {
+                transform: rotate(180deg);
+            }
+        }
+        &:has(input[type = "checkbox"]:checked ~) {
+            image {
+                transform: rotate(180deg);
+            }
+        }
+    }
+
+    #options {
+        display: none;
+        height: 0;
+        position: absolute;
+        padding: 16px;
+        background-color: var(--deep-dark-blue);
+        z-index: 3;
+        width: calc(100% - 32px);
+        flex-direction: column;
+        transition: height 0.2s ease-in-out;
+
+        .option {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+
+            input[type = "checkbox"] {
+                width: 24px;
+                height: 24px;
+                transform: scale(1);
+            }
+
+            input[type = "checkbox"]:active {
+                transform: scale(1.4);
+            }
+        }
+    }
+
+    &:has(.menu-display input[type = "checkbox"]:checked ~) {
+        #options {
+            display: flex;
+            height: 100%;
+        }
+    }
+
+    footer {
+        width: calc(100% - 32px);
+        padding: 16px;
+        bottom: 0;
+        position: absolute;
+        text-align: center;
+    }
+}
