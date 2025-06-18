@@ -19,21 +19,22 @@ aside {
     float: left;
     height: 100vh;
     width: 450px;
-    max-width: 20vw;
+    min-width: 20vw;
 
     h1 {
         text-align: center;
     }
 
-    .menu-display{
+    #settings-btn{
         display: none;
     }
 
     #options {
+        display: flex;
         width: calc(100% - 32px);
         padding: 16px;
-        display: flex;
         flex-direction: column;
+        background: none;
 
         .option {
             display: flex;

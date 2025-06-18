@@ -62,11 +62,11 @@ aside {
         }
     }
 
-    .menu-display{
+    #settings-btn {
         background: none;
         border: none;
         image {
-            color: var(--deep-dark-blue);
+            fill-rule: var(--deep-dark-blue);
         }
     }
 
