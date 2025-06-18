@@ -56,10 +56,6 @@ aside {
     h1 {
         font-family: Aladin, sans-serif;
         font-size: 4rem;
-        transform: translateX(-8px);
-        img {
-            transform: translateY(8px);
-        }
     }
 
     #settings-btn {
