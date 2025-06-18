@@ -1,0 +1,78 @@
+@font-face {
+    font-family: Modak;
+    src: url("../../assets/fonts/modak/Modak-Regular.ttf");
+}
+
+@font-face {
+    font-family: Aladin;
+    src: url("../../assets/fonts/Aladin/Aladin-Regular.ttf");
+}
+
+@font-face {
+    font-family: Sour_Gummy;
+    src: url("../../assets/fonts/Sour_Gummy/SourGummy-VariableFont_wdth,wght.ttf");
+}
+
+/* ##### VARS ##### */
+:root {
+    --neutral-black: #222;
+    --dark-blue: #1E2637FF;
+    --deep-dark-blue: #0c0f16;
+    --shadow: rgba(0, 0, 0, 0.6);
+}
+
+
+/* ##### GLOBAL STYLE #####*/
+:root, body, html {
+    padding: 0;
+    margin: 0;
+    max-width: 100%;
+    max-height: 100%;
+    background-color: var( --neutral-black);
+}
+
+a {
+    text-decoration: none;
+    color: #60b6ff;
+    &:hover {
+        color: #6b60ff;
+    }
+}
+
+#app {
+    z-index: 2;
+    .loader {
+        z-index: 1;
+    }
+}
+
+aside {
+    background-color: var( --dark-blue);
+    color: white;
+    font-family: Sour_Gummy, sans-serif;
+
+
+
+    h1 {
+        font-family: Aladin, sans-serif;
+        font-size: 4rem;
+    }
+
+    #settings-btn {
+        background: none;
+        border: none;
+        image {
+            fill-rule: var(--deep-dark-blue);
+        }
+    }
+
+    #options {
+        .option {
+            font-size: 1.4rem;
+        }
+    }
+
+    footer {
+        background-color: var(--deep-dark-blue);
+    }
+}

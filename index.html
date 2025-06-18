@@ -4,12 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="src/assets/web/chess-pieces-svg/wking.svg" />
-    <link rel="stylesheet" href="./src/assets/style.css">
+    <link rel="stylesheet" href="./src/assets/style/globals.css">
+    <link rel="stylesheet" href="./src/assets/style/small.css" media="screen and (max-width: 90em)" />
+    <link rel="stylesheet" href="./src/assets/style/large.css" media="screen and (min-width: 90em)" />
+    <script src="index.ts" type="module"></script>
     <title>ChessGame</title>
   </head>
   <body>
     <aside>
-      <h1><img width="70px" height="70px" src="src/assets/web/chess-pieces-svg/wking.svg" alt="logo">ChessGame</h1>
+      <div id="title"><img src="src/assets/web/chess-pieces-svg/wking.svg" alt="logo"><h1>ChessGame</h1></div>
+      <button class="menu-display" id="settings-btn" aria-label="settings">
+        <input type="checkbox" id="checkbox-menu-options" hidden/>
+        <img src="src/assets/web/options.svg" alt="options button">
+      </button>
       <div id="options">
         <div class="option">
           <label for="gametype">Plateau en 3D (inDev)</label>
@@ -23,29 +30,5 @@
     </aside>
     <div id="app">
     </div>
-    <script type="module">
-      import * as chessHTML from './src/html-chess.ts';
-      import * as chess3d from './src/3d-chess.ts';
-      import loaderSVG from './src/assets/web/loader.svg';
-
-      const gameTypeSwitch = document.getElementById('gametype') ;
-      const loader = document.createElement('img');
-      loader.classList.add('loader');
-      loader.src = loaderSVG;
-      document.getElementById('app').appendChild(loader);
-      chessHTML.startGame().then(() => document.getElementById('app').removeChild(loader));
-
-      function switchGameType(event) {
-        document.getElementById('app').innerHTML = '';
-        document.getElementById('app').appendChild(loader);
-        if(gameTypeSwitch.checked) {
-          chess3d?.startGame().then(() => document.getElementById('app').removeChild(loader));
-        } else {
-          chessHTML?.startGame().then(() => document.getElementById('app').removeChild(loader));
-        }
-      }
-
-      gameTypeSwitch.addEventListener('input', switchGameType);
-    </script>
   </body>
 </html>

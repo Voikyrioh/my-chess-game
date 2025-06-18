@@ -1,0 +1,77 @@
+#app {
+    float: right;
+    margin: 0 auto;
+    transform: translateX(calc(( 100vw - min(450px, 20vw) ) / 2  - min(70vw, 98vh))) translateY(1vh);
+    width: 98vh;
+    height: 98vh;
+    max-width: 70vw;
+    max-height: 70vw;
+    .loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100px;
+    }
+}
+
+aside {
+    position: relative;
+    float: left;
+    height: 100vh;
+    width: 450px;
+    min-width: 20vw;
+
+    #title {
+        display: flex;
+        justify-content: center;
+        margin: 32px auto;
+        transform: translateX(-0.5em);
+        h1 {
+            margin: 0;
+            text-align: center;
+            font-size: 4.5em;
+        }
+        img {
+            width: 5.5em;
+            height: 5.5em;
+            transform: translateY(-0.5em);
+        }
+    }
+
+    #settings-btn{
+        display: none;
+    }
+
+    #options {
+        display: flex;
+        width: calc(100% - 32px);
+        padding: 16px;
+        flex-direction: column;
+        background: none;
+
+        .option {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+
+            input[type = "checkbox"] {
+                width: 24px;
+                height: 24px;
+                transform: scale(1);
+            }
+
+            input[type = "checkbox"]:active {
+                transform: scale(1.4);
+            }
+        }
+    }
+
+    footer {
+        width: calc(100% - 32px);
+        padding: 16px;
+        min-height: 120px;
+        bottom: 0;
+        position: absolute;
+        text-align: center;
+    }
+}
