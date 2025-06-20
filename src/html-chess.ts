@@ -2,11 +2,11 @@ import {Position} from "./engine/entities/game/position.ts";
 import type {boardColumns, boardRows} from "./engine/entities/game/board.ts";
 
 import './assets/html-chess.css';
-import type {ChessPiece} from "./engine/entities/pieces/chess-piece.ts";
-import {Gameplay} from "./engine/gameplay.ts";
-import type {Move} from "./engine/entities/game/move.ts";
-import pieceAssets from './game/html/assets/html-pieces-assets.ts';
-import type {Pawn} from "./engine/entities/pieces/pawn.ts";
+import type {ChessPiece} from "./game/entities/pieces/chess-piece.ts";
+import {Gameplay} from "./game/gameplay.ts";
+import type {Move} from "./game/entities/game/move.ts";
+import pieceAssets from './html-pieces-assets.ts';
+import type {Pawn} from "./game/entities/pieces/pawn.ts";
 
 const fenUrl = new URLSearchParams(document.location.search).get('fen');
 const game = new Gameplay(fenUrl ?? undefined);
