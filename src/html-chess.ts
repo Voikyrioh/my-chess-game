@@ -1,5 +1,5 @@
-import {Position} from "./engine/entities/game/position.ts";
-import type {boardColumns, boardRows} from "./engine/entities/game/board.ts";
+import {Position} from "./game/entities/game/position.ts";
+import type {boardColumns, boardRows} from "./game/entities/game/board.ts";
 
 import './assets/html-chess.css';
 import type {ChessPiece} from "./game/entities/pieces/chess-piece.ts";
