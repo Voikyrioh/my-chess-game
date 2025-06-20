@@ -1,18 +1,52 @@
-import {Position} from "./game/entities/game/position.ts";
-import type {boardColumns, boardRows} from "./game/entities/game/board.ts";
+import {Position} from "./engine/entities/game/position.ts";
+import type {boardColumns, boardRows} from "./engine/entities/game/board.ts";
 
 import './assets/html-chess.css';
-import type {ChessPiece} from "./game/entities/pieces/chess-piece.ts";
-import {Gameplay} from "./game/gameplay.ts";
-import type {Move} from "./game/entities/game/move.ts";
-import pieceAssets from './html-pieces-assets.ts';
-import type {Pawn} from "./game/entities/pieces/pawn.ts";
+import type {ChessPiece} from "./engine/entities/pieces/chess-piece.ts";
+import {Gameplay} from "./engine/gameplay.ts";
+import type {Move} from "./engine/entities/game/move.ts";
+import pieceAssets from './game/html/assets/html-pieces-assets.ts';
+import type {Pawn} from "./engine/entities/pieces/pawn.ts";
 
 const fenUrl = new URLSearchParams(document.location.search).get('fen');
 const game = new Gameplay(fenUrl ?? undefined);
 const cases = new Map<string, HTMLDivElement>();
 let checkmateModal: HTMLDialogElement;
 let moveToPlay: Move|null = null;
+let selectedPiece: ChessPiece|null = null;
+
+function handleTouchScreen(event: TouchEvent) {
+    console.log(event);
+    if(event.touches.length === 1) {
+        const touch = event.touches[0];
+        let target = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLDivElement | undefined;
+        if (target) {
+            if ((selectedPiece && target.parentElement?.classList.contains(('possible-move'))) ||
+                target.parentElement?.classList.contains('piece')
+            ) {
+                target = target.parentElement as HTMLDivElement;
+            }
+
+            if (selectedPiece && target.classList.contains('possible-move')) {
+                console.log("I'm playing move !");
+                target.click();
+                if (moveToPlay) {
+                    game.play(moveToPlay);
+                    defaultClick();
+                    render();
+                }
+            } else if (target.classList.contains('piece')) {
+                const pieceCase = target.parentElement as HTMLDivElement;
+                const [row, column] = pieceCase.id.split('')
+                if (!column || !row) throw new Error('Invalid column or row');
+                selectedPiece = game.getPieceFromPosition(new Position(column as boardColumns, Number(row) as boardRows))!;
+                renderPossibleMoves(selectedPiece)
+            } else {
+                defaultClick();
+            }
+        }
+    }
+}
 
 function getBoardChessChar(pos: string): string|null {
     const piece = game.getPieceFromPosition(Position.fromString(pos));
@@ -172,6 +206,7 @@ function movePiece(move: Move) {
 export async function startGame() {
     return new Promise<void>((resolve) => {
         const app = document.getElementById('app') as HTMLDivElement;
+        document.addEventListener('touchstart', handleTouchScreen);
         const colRefs = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
         for (let r = 1; r <= 8; r++) {
             for (let c = 1; c <= 8; c++) {
