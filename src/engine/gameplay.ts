@@ -4,7 +4,7 @@ import type {ChessPiece, PieceMovements} from "./entities/pieces/chess-piece.ts"
 import type {Position} from "./entities/game/position.ts";
 import type {Move} from "./entities/game/move.ts";
 import {FenNotation} from "./entities/game/fen-notation.ts";
-import {simulateMove} from "../tools/simulation.ts";
+import {simulateMove} from "./simulation.ts";
 
 export class Gameplay {
     #playerWhite: Player;

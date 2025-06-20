@@ -1,6 +1,6 @@
-import {Board} from "../game/entities/game/board.ts";
-import {Move} from "../game/entities/game/move.ts";
-import {Position} from "../game/entities/game/position.ts";
+import {Board} from "./entities/game/board.ts";
+import {Move} from "./entities/game/move.ts";
+import {Position} from "./entities/game/position.ts";
 
 class SimulatedBoard extends Board {
     constructor(board: Board) {

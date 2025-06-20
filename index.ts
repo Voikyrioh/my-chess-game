@@ -1,5 +1,5 @@
 import * as chessHTML from './src/html-chess.ts';
-import * as chess3d from './src/3d-chess.ts';
+import * as chess3d from './src/game/3d/factory.ts';
 // @ts-ignore
 import loaderSVG from './src/assets/web/loader.svg';
 
