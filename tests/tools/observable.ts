@@ -8,56 +8,56 @@ describe('Observable', () => {
         observable = new Observable<number>();
     });
 
-    it('devrait émettre la valeur initiale aux nouveaux abonnés si elle existe', () => {
+    it('should emit initial value to new subscribers if it exists', () => {
         const observable = new Observable<number>(42);
-        let valeurReçue: number | undefined;
+        let receivedValue: number | undefined;
 
-        observable.subscribe((valeur) => {
-            valeurReçue = valeur;
+        observable.subscribe((value) => {
+            receivedValue = value;
         });
 
-        expect(valeurReçue).to.equal(42);
+        expect(receivedValue).to.equal(42);
     });
 
-    it('devrait notifier tous les abonnés lors d\'un emit', () => {
-        let valeur1: number | undefined;
-        let valeur2: number | undefined;
+    it('should notify all subscribers on emit', () => {
+        let value1: number | undefined;
+        let value2: number | undefined;
 
-        observable.subscribe((v) => valeur1 = v);
-        observable.subscribe((v) => valeur2 = v);
+        observable.subscribe((v) => value1 = v);
+        observable.subscribe((v) => value2 = v);
 
         observable.emit(123);
 
-        expect(valeur1).to.equal(123);
-        expect(valeur2).to.equal(123);
+        expect(value1).to.equal(123);
+        expect(value2).to.equal(123);
     });
 
-    it('devrait permettre de se désabonner correctement', () => {
-        let compteur = 0;
-        const subscription = observable.subscribe(() => compteur++);
+    it('should allow unsubscribing correctly', () => {
+        let counter = 0;
+        const subscription = observable.subscribe(() => counter++);
 
         observable.emit(1);
-        expect(compteur).to.equal(1);
+        expect(counter).to.equal(1);
 
         subscription.unsubscribe();
         observable.emit(2);
-        expect(compteur).to.equal(1); // Le compteur ne devrait pas augmenter après désabonnement
+        expect(counter).to.equal(1); // Counter should not increase after unsubscribing
     });
 
-    it('devrait gérer plusieurs abonnements et désabonnements', () => {
-        const valeurs: number[] = [];
-        const subscription1 = observable.subscribe((v) => valeurs.push(v));
-        observable.subscribe((v) => valeurs.push(v * 2));
+    it('should handle multiple subscriptions and unsubscriptions', () => {
+        const values: number[] = [];
+        const subscription1 = observable.subscribe((v) => values.push(v));
+        observable.subscribe((v) => values.push(v * 2));
 
         observable.emit(5);
-        expect(valeurs).to.deep.equal([5, 10]);
+        expect(values).to.deep.equal([5, 10]);
 
         subscription1.unsubscribe();
         observable.emit(3);
-        expect(valeurs).to.deep.equal([5, 10, 6]); // Seul le deuxième abonné reçoit la valeur
+        expect(values).to.deep.equal([5, 10, 6]); // Only the second subscriber receives the value
     });
 
-    it('devrait avoir des identifiants uniques pour chaque abonnement', () => {
+    it('should have unique IDs for each subscription', () => {
         const subscription1 = observable.subscribe(() => {});
         const subscription2 = observable.subscribe(() => {});
 
