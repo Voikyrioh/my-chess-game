@@ -1,7 +1,7 @@
 # Utiliser une image Node.js officielle comme base
 FROM node:22-alpine AS BUILDER
-
-LABEL authors="voikyrioh"
+LABEL org.opencontainers.image.source=https://github.com/voikyrioh/my-chess-game
+LABEL author="voikyrioh"
 
 # Créer et définir le répertoire de travail
 WORKDIR /app
