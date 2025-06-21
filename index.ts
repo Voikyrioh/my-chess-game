@@ -4,8 +4,8 @@ import {Gameplay} from "./src/engine";
 // @ts-ignore
 import loaderSVG from './src/assets/web/loader.svg';
 
-
-const gameplay = new Gameplay()
+const fenUrl = new URLSearchParams(document.location.search).get('fen') ?? '';
+const gameplay = new Gameplay(fenUrl);
 export function openOptions() {
     const menuOptions = document.getElementById('checkbox-menu-options') as HTMLInputElement | null;
     if (menuOptions) menuOptions.checked = !menuOptions.checked

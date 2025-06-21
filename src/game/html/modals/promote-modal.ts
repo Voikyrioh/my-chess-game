@@ -1,10 +1,15 @@
+import './promote-modal.css';
 import {BaseModal} from "./base-modal.ts";
 import pieceAssets from "../assets/html-pieces-assets.ts";
 
 export function promoteModal(color: 'white'|'black', pos: {x: number, y: number}, callback: Function): BaseModal {
+    console.log('createModal ');
+    const t0 = performance.now();
     const modal = new BaseModal('promote-diag');
+    const t1 = performance.now();
+    console.log('modal created ', t1-t0);
 
-    const dialogContent = ['queen', 'rook', 'knight', 'bishop'].map(p => {
+    ['queen', 'rook', 'knight', 'bishop'].map(p => {
         const div = document.createElement('div')
         const img = document.createElement('img');
         div.classList.add('promote-btn');
@@ -14,15 +19,15 @@ export function promoteModal(color: 'white'|'black', pos: {x: number, y: number}
         };
         img.src = pieceAssets[color][p as 'queen'|'knight'|'bishop'|'rook'];
         div.appendChild(img);
-        return div;
+        modal.append(div);
+        modal.append(document.createElement('hr'));
     });
+    modal.element.removeChild(modal.element.lastChild!);
 
+    const t2 = performance.now();
+    console.log("generated content ", t2-t1);
 
-    dialogContent.forEach((elem, index) => {
-        modal.append(elem);
-        if (index !== dialogContent.length - 1) modal.append(document.createElement('hr'));
-    })
-    modal.element.style.top = `calc(${pos.y}px - ${color === "white" ? '0px' : '400px'})`;
+    modal.element.style.transform = `translate(calc(${pos.x}px - 50vw), calc(${pos.y}px - 50vh))`;
 
     return modal;
 }

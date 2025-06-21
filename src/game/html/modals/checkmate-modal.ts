@@ -1,7 +1,7 @@
 import {BaseModal} from "./base-modal.ts";
 
 export function checkmateModal(color: string): BaseModal {
-    const modal = new BaseModal();
+    const modal = new BaseModal('checkmate-diag', true);
 
     const title = document.createElement('h3')
     title.innerText = `Echec et mat`;

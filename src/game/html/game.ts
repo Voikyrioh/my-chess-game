@@ -51,7 +51,6 @@ export class GameHTML {
     promote(piece: Pawn): Promise<ChessPiece> {
         return new Promise<ChessPiece>((resolve) => {
             getCursorPos().then(pos => {
-                console.log("opening modal");
                 modal.promoteModal(piece.color, pos, (value: 'queen'|'knight'|'bishop'|'rook') => {
                     resolve(piece.promote(value))
                 }).open();
@@ -123,8 +122,13 @@ export class GameHTML {
                         pieceElement.classList.remove('piece-white');
                         pieceElement.classList.add('piece-black');
                     }
-                    pieceElement.draggable = boardPiece.color === this.#game.turn ? true : false;
-                    pieceElement.ondragstart = (event) => this.handleDragEvent(event, gamePiece);
+
+                    if (boardPiece.color === this.#game.turn) {
+                        pieceElement.draggable = true;
+                        pieceElement.classList.add('playable');
+                        pieceElement.ondragstart = (event) => this.handleDragEvent(event, gamePiece);
+                    }
+
                 } else {
                     pieceElement.remove()
                 }

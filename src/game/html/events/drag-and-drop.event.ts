@@ -49,15 +49,16 @@ export class DragAndDropEvent {
         this.target.classList.add('dragging');
     }
 
-    getNearestCase(event: MouseEvent): HTMLDivElement {
+    getNearestCase(event: MouseEvent): HTMLDivElement|null {
         const caseTarget = document.elementFromPoint(event.clientX, event.clientY);
 
         if (caseTarget instanceof HTMLElement) {
             if (caseTarget.classList.contains('case')) return caseTarget as HTMLDivElement;
             else if (caseTarget.parentElement instanceof HTMLDivElement && caseTarget.parentElement.classList.contains('case')) return caseTarget.parentElement
-            else throw new Error('Cannot find case');
+            else console.debug('Cannot find case or move not possible');
         }
-        else throw new Error('Invalid target');
+        else console.debug('Invalid target');
+        return null;
     }
 
     caseToPosition(caseElement: HTMLDivElement): Position {
@@ -68,7 +69,7 @@ export class DragAndDropEvent {
 
     getPossibleMove(event: MouseEvent): Move | undefined {
         const eventCase = this.getNearestCase(event);
-
+        if (!eventCase) return;
         return this.#possibleMoves.find(move => move.to.equals(this.caseToPosition(eventCase)));
     }
 }
