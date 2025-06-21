@@ -1,4 +1,3 @@
-import './promote-modal.css';
 import {BaseModal} from "./base-modal.ts";
 import pieceAssets from "../assets/html-pieces-assets.ts";
 
