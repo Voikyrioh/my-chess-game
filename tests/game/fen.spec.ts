@@ -1,4 +1,4 @@
-import {FenError, FenNotation} from "../../src/game/entities/game/fen-notation";
+import {FenError, FenNotation} from "../../src/engine/entities/game/fen-notation";
 import {expect} from "chai";
 
 describe('Fen String Generator', () => {
