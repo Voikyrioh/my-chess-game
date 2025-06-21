@@ -1,8 +1,11 @@
-import * as chessHTML from './src/html-chess.ts';
+import { GameHTML } from './src/game/html/game.ts';
 import * as chess3d from './src/game/3d/factory.ts';
+import {Gameplay} from "./src/engine";
 // @ts-ignore
 import loaderSVG from './src/assets/web/loader.svg';
 
+
+const gameplay = new Gameplay()
 export function openOptions() {
     const menuOptions = document.getElementById('checkbox-menu-options') as HTMLInputElement | null;
     if (menuOptions) menuOptions.checked = !menuOptions.checked
@@ -15,7 +18,7 @@ function switchGameType() {
     const loader = document.createElement('img');
     if(!loader) throw new Error('loader not found');
 
-    const app = document.getElementById('app');
+    const app = document.getElementById('app') as HTMLDivElement | null;
     if(!app) throw new Error('app not found');
 
     app.innerHTML = '';
@@ -23,7 +26,7 @@ function switchGameType() {
     if(gameTypeSwitch.checked) {
         chess3d?.startGame().then(() => app.removeChild(loader));
     } else {
-        chessHTML?.startGame().then(() => app.removeChild(loader));
+        GameHTML.load(gameplay, app).then(() => app.removeChild(loader));
     }
 }
 
@@ -37,13 +40,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const loader = document.createElement('img');
     if(!loader) throw new Error('loader not found');
 
-    const app = document.getElementById('app');
+    const app = document.getElementById('app') as HTMLDivElement | null;
     if(!app) throw new Error('app not found');
 
     loader.classList.add('loader');
     loader.src = loaderSVG;
     app.appendChild(loader);
-    chessHTML.startGame().then(() => app.removeChild(loader));
+    GameHTML.load(gameplay, app).then(() => app.removeChild(loader));
     gameTypeSwitch.addEventListener('input', switchGameType);
 })
 

@@ -1,9 +1,13 @@
-import type {Gameplay} from "../../engine/gameplay.ts";
-import {Position} from "../../engine/entities/game/position.ts";
-import type {boardColumns, boardRows} from "../../engine/entities/game/board.ts";
-import {type HTMLChessEventTypes, GameTouchEvent} from "./types/events.ts";
+import {type Move, type Pawn, Position} from "../../engine";
+import type {ChessPiece, Gameplay, boardColumns, boardRows} from "../../engine";
+import pieceAssets from "./assets/html-pieces-assets.ts";
+import modal from "./modals";
+import {DragAndDropEvent} from "./events/drag-and-drop.event.ts";
+import {getCursorPos} from "../../tools/get-cursor-pos.ts";
 
 export class GameHTML {
+    static readonly colRefs = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+
     #game: Gameplay;
     #htmlCases = new Map<string, HTMLDivElement>();
 
@@ -11,31 +15,142 @@ export class GameHTML {
         this.#game = game;
     }
 
-    render() {
-
+    private registerGlobalEvents() {
+        //document.addEventListener('touchstart', event => { this.runEvent(GameTouchEvent, event) });
     }
 
-    runEvent(event: HTMLChessEventTypes, originalEvent: Event) {
+    private init(app: HTMLDivElement) {
+        for (let r = 1; r <= 8; r++) {
+            for (let c = 1; c <= 8; c++) {
+                const ca = document.createElement('div');
+                ca.classList.add('case');
+                ca.classList.add((r + c) % 2 === 0 ? 'white' : 'black');
+                ca.id = `${r}${GameHTML.colRefs[c - 1]}`;
+                this.#htmlCases.set(new Position(GameHTML.colRefs[c-1] as boardColumns, r as boardRows).toString(), ca);
+                app.appendChild(ca);
+            }
+        }
 
+        this.registerGlobalEvents()
+    }
+
+    #getGameAssetFromPosition(pos: Position): string|null {
+        const piece = this.#game.getPieceFromPosition(pos);
+        if (!piece) return '';
+        switch (piece.type) {
+            case 'pawn': return pieceAssets[piece.color].pawn;
+            case 'rook': return pieceAssets[piece.color].rook;
+            case 'knight': return pieceAssets[piece.color].knight;
+            case 'bishop': return pieceAssets[piece.color].bishop;
+            case 'queen': return pieceAssets[piece.color].queen;
+            case 'king': return pieceAssets[piece.color].king;
+            default: return null;
+        }
+    }
+
+    promote(piece: Pawn): Promise<ChessPiece> {
+        return new Promise<ChessPiece>((resolve) => {
+            getCursorPos().then(pos => {
+                console.log("opening modal");
+                modal.promoteModal(piece.color, pos, (value: 'queen'|'knight'|'bishop'|'rook') => {
+                    resolve(piece.promote(value))
+                }).open();
+            })
+
+        })
+    }
+
+    movePiece(move: Move) {
+        this.defaultClick();
+        if (move.promoteMovement && move.piece.type === 'pawn' && !move.target) {
+           this.promote(move.piece as Pawn).then(piece => {
+               this.#game.play(move.promote(piece) ?? move);
+               this.#render();
+           })
+        } else {
+            this.#game.play(move);
+            this.#render();
+        }
+    }
+
+    defaultClick() {
+        this.#htmlCases.forEach((p) => {
+            if (p.classList.contains('possible-move')) {
+                p.classList.remove('possible-move');
+                p.classList.remove('take');
+                p.classList.remove('castling');
+                p.onclick = null;
+            }
+        })
+    }
+
+    renderPossibleMoves(piece: ChessPiece): Move[] {
+        this.defaultClick();
+        const possibleMoves: Move[] =  this.#game.getPossibleMoves(piece);
+        possibleMoves.forEach(move => {
+            const ca = this.#htmlCases.get(move.to.toString());
+            if (ca) {
+                ca.classList.add('possible-move');
+                if (['TAKE', 'EN_PASSANT'].includes(move.type)) {
+                    ca.classList.add('take');
+                }
+                if (move.type === "CASTLING") {
+                    ca.classList.add('castling');
+                }
+            }
+        });
+        return possibleMoves;
+    }
+
+    #render() {
+        this.#htmlCases.forEach((p, pos) => {
+            p.childNodes.forEach(c => {c.remove()})
+            const piece = this.#getGameAssetFromPosition(Position.fromString(pos));
+            if (piece) {
+                const pieceElement = document.createElement('div');
+                const pieceAsset = document.createElement('img');
+                const boardPiece = this.#game.getPieceFromPosition(Position.fromString(pos))!;
+                pieceAsset.alt = `${boardPiece.color} ${boardPiece.type}`;
+                pieceAsset.src = piece;
+                pieceElement.appendChild(pieceAsset);
+                let gamePiece = this.#game.getPieceFromPosition(Position.fromString(pos));
+                if (gamePiece) {
+                    pieceElement.classList.add('piece');
+                    if (gamePiece.color === 'white') {
+                        pieceElement.classList.remove('piece-black');
+                        pieceElement.classList.add('piece-white');
+                    } else {
+                        pieceElement.classList.remove('piece-white');
+                        pieceElement.classList.add('piece-black');
+                    }
+                    pieceElement.draggable = boardPiece.color === this.#game.turn ? true : false;
+                    pieceElement.ondragstart = (event) => this.handleDragEvent(event, gamePiece);
+                } else {
+                    pieceElement.remove()
+                }
+                p.appendChild(pieceElement);
+            }
+        })
+        if (this.#game.checkmate) {
+            modal.checkmateModal(this.#game.getCheck()!).open();
+        }
+    }
+
+    private handleDragEvent(event: DragEvent, piece: ChessPiece) {
+        const subscription = new DragAndDropEvent(event, piece, this).observable.subscribe(move => {
+            if (move) this.movePiece(move);
+            else this.defaultClick();
+
+            subscription.unsubscribe();
+        })
     }
 
     static async load(game: Gameplay, app: HTMLDivElement): Promise<GameHTML> {
         return new Promise<GameHTML>((resolve) => {
             const gameHTML = new GameHTML(game);
-            document.addEventListener('touchstart', event => { gameHTML.runEvent(GameTouchEvent, event) });
-            const colRefs = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-            for (let r = 1; r <= 8; r++) {
-                for (let c = 1; c <= 8; c++) {
-                    const ca = document.createElement('div');
-                    ca.classList.add('case');
-                    ca.classList.add((r + c) % 2 === 0 ? 'white' : 'black');
-                    ca.id = `${r}${colRefs[c - 1]}`;
-                    gameHTML.#htmlCases.set(new Position(colRefs[c-1] as boardColumns, r as boardRows).toString(), ca);
-                    app.appendChild(ca);
-                }
-            }
+            gameHTML.init(app);
+            gameHTML.#render();
 
-            gameHTML.render();
             resolve(gameHTML);
         })
     }
