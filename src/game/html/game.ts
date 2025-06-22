@@ -1,8 +1,8 @@
-import {type Move, type Pawn, Position} from "../../engine";
-import type {ChessPiece, Gameplay, boardColumns, boardRows} from "../../engine";
+import {Position} from "../../engine";
+import type {boardColumns, boardRows, ChessPiece, Gameplay,  Move, Pawn} from "../../engine";
 import pieceAssets from "./assets/html-pieces-assets.ts";
 import modal from "./modals";
-import {PieceDragAndDropEvent} from "./events/piece-drag-and-drop.event.ts";
+import {DragAndDropEvent} from "./events/drag-and-drop.event.ts";
 import {getCursorPos} from "../../tools/get-cursor-pos.ts";
 import {PieceTouchEvent} from "./events/touch.event.ts";
 import {detectDevice} from "../../tools/detect-device.ts";
@@ -14,15 +14,26 @@ export class GameHTML {
     #htmlCases = new Map<string, HTMLDivElement>();
     #touchEvent: PieceTouchEvent | null = null;
 
+
     private constructor(game: Gameplay) {
         this.#game = game;
     }
 
-    private registerGlobalEvents() {
+    static async load(game: Gameplay, app: HTMLDivElement): Promise<GameHTML> {
+        return new Promise<GameHTML>((resolve) => {
+            const gameHTML = new GameHTML(game);
+            gameHTML.#init(app);
+            gameHTML.#render();
+
+            resolve(gameHTML);
+        })
+    }
+
+    #registerGlobalEvents() {
         this.#registerTouchEvent();
     }
 
-    private init(app: HTMLDivElement) {
+    #init(app: HTMLDivElement) {
         for (let r = 1; r <= 8; r++) {
             for (let c = 1; c <= 8; c++) {
                 const ca = document.createElement('div');
@@ -34,21 +45,7 @@ export class GameHTML {
             }
         }
 
-        this.registerGlobalEvents()
-    }
-
-    #getGameAssetFromPosition(pos: Position): string|null {
-        const piece = this.#game.getPieceFromPosition(pos);
-        if (!piece) return '';
-        switch (piece.type) {
-            case 'pawn': return pieceAssets[piece.color].pawn;
-            case 'rook': return pieceAssets[piece.color].rook;
-            case 'knight': return pieceAssets[piece.color].knight;
-            case 'bishop': return pieceAssets[piece.color].bishop;
-            case 'queen': return pieceAssets[piece.color].queen;
-            case 'king': return pieceAssets[piece.color].king;
-            default: return null;
-        }
+        this.#registerGlobalEvents()
     }
 
     promote(piece: Pawn): Promise<ChessPiece> {
@@ -75,6 +72,24 @@ export class GameHTML {
         }
     }
 
+    getPieceFromPosition(position: Position): ChessPiece | null {
+        return this.#game.getPieceFromPosition(position);
+    }
+
+    #getGameAssetFromPosition(pos: Position): string|null {
+        const piece = this.#game.getPieceFromPosition(pos);
+        if (!piece) return '';
+        switch (piece.type) {
+            case 'pawn': return pieceAssets[piece.color].pawn;
+            case 'rook': return pieceAssets[piece.color].rook;
+            case 'knight': return pieceAssets[piece.color].knight;
+            case 'bishop': return pieceAssets[piece.color].bishop;
+            case 'queen': return pieceAssets[piece.color].queen;
+            case 'king': return pieceAssets[piece.color].king;
+            default: return null;
+        }
+    }
+
     defaultClick() {
         this.#htmlCases.forEach((p) => {
             if (p.classList.contains('possible-move')) {
@@ -93,12 +108,8 @@ export class GameHTML {
             const ca = this.#htmlCases.get(move.to.toString());
             if (ca) {
                 ca.classList.add('possible-move');
-                if (['TAKE', 'EN_PASSANT'].includes(move.type)) {
-                    ca.classList.add('take');
-                }
-                if (move.type === "CASTLING") {
-                    ca.classList.add('castling');
-                }
+                if (['TAKE', 'EN_PASSANT'].includes(move.type)) ca.classList.add('take');
+                if (move.type === "CASTLING") ca.classList.add('castling');
             }
         });
         return possibleMoves;
@@ -142,29 +153,6 @@ export class GameHTML {
         }
     }
 
-    getPieceFromPosition(position: Position): ChessPiece | null {
-        return this.#game.getPieceFromPosition(position);
-    }
-
-    private handleDragEvent(event: DragEvent, piece: ChessPiece) {
-        const subscription = new PieceDragAndDropEvent(event, piece, this).observable.subscribe(move => {
-            if (move) this.movePiece(move);
-            else this.defaultClick();
-
-            subscription.unsubscribe();
-        })
-    }
-
-    static async load(game: Gameplay, app: HTMLDivElement): Promise<GameHTML> {
-        return new Promise<GameHTML>((resolve) => {
-            const gameHTML = new GameHTML(game);
-            gameHTML.init(app);
-            gameHTML.#render();
-
-            resolve(gameHTML);
-        })
-    }
-
     #registerTouchEvent() {
         if (detectDevice() === 'mobile') {
             document.addEventListener('touchstart', event => {
@@ -185,7 +173,16 @@ export class GameHTML {
     #registerDragEvent(pieceElement: HTMLDivElement, gamePiece: ChessPiece) {
         if (detectDevice() === 'desktop') {
             pieceElement.draggable = true;
-            pieceElement.ondragstart = (event) => this.handleDragEvent(event, gamePiece);
+            pieceElement.ondragstart = (event) => this.#handleDragEvent(event, gamePiece);
         }
+    }
+
+    #handleDragEvent(event: DragEvent, piece: ChessPiece) {
+        const subscription = new DragAndDropEvent(event, piece, this).observable.subscribe(move => {
+            if (move) this.movePiece(move);
+            else this.defaultClick();
+
+            subscription.unsubscribe();
+        })
     }
 }

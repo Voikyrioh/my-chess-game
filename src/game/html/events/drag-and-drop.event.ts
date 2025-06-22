@@ -3,7 +3,7 @@ import {Observable} from "../../../tools/observable.ts";
 import {GameHTML} from "../game.ts";
 import {caseToPosition, getNearestCase} from "../tools/dom-chess-utilities.ts";
 
-export class PieceDragAndDropEvent {
+export class DragAndDropEvent {
     readonly gameref: Readonly<GameHTML>;
     readonly target: HTMLDivElement;
     readonly piece: ChessPiece;
