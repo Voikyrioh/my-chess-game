@@ -2,9 +2,9 @@ import {Position} from "../../engine";
 import type {boardColumns, boardRows, ChessPiece, Gameplay,  Move, Pawn} from "../../engine";
 import pieceAssets from "./assets/html-pieces-assets.ts";
 import modal from "./modals";
-import {DragAndDropEvent} from "./events/drag-and-drop.event.ts";
+import {DragAndDropEvent} from "./events/drag-and-drop/drag-and-drop.event.ts";
 import {getCursorPos} from "../../tools/get-cursor-pos.ts";
-import {PieceTouchEvent} from "./events/touch.event.ts";
+import {PieceTouchEvent} from "./events/touch/touch.event.ts";
 import {detectDevice} from "../../tools/detect-device.ts";
 
 export class GameHTML {

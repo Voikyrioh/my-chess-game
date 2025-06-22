@@ -1,7 +1,8 @@
-import {ChessPiece, Move} from "../../../engine";
-import {Observable} from "../../../tools/observable.ts";
-import {GameHTML} from "../game.ts";
-import {caseToPosition, getNearestCase} from "../tools/dom-chess-utilities.ts";
+import {ChessPiece, Move} from "../../../../engine";
+import {Observable} from "../../../../tools/observable.ts";
+import {GameHTML} from "../../game.ts";
+import {caseToPosition, getNearestCase} from "../../tools/dom-chess-utilities.ts";
+import {moving} from "./drag-and-drop.listeners.ts";
 
 export class DragAndDropEvent {
     readonly gameref: Readonly<GameHTML>;
@@ -23,30 +24,22 @@ export class DragAndDropEvent {
         event.preventDefault();
 
         const originalPos = {x: event.clientX, y: event.clientY};
-        const moving = (e: MouseEvent) => {
-            this.target.style.position = 'absolute';
-            this.target.style.transform = `translate(${e.clientX - originalPos.x}px, ${e.clientY - originalPos.y}px)`;
-            const pointingElement = document.elementFromPoint(e.clientX, e.clientY);
-            if (pointingElement && pointingElement.classList.contains('case')) {
-                pointingElement.classList.add('selection-hover');
-                (pointingElement as HTMLDivElement)!.onmouseleave = () => pointingElement.classList.remove('selection-hover');
-            }
-        };
+        const handleMove = (e: MouseEvent) => moving(e, this.target, originalPos);
 
-        document.addEventListener('mousemove', moving);
+        document.addEventListener('mousemove', handleMove);
         this.target.classList.add('dragging');
 
-        const onEnd = (event: MouseEvent) => {
+        const handleDragEnd = (event: MouseEvent) => {
             this.target.classList.remove('dragging');
-            document.removeEventListener('mousemove', moving);
+            document.removeEventListener('mousemove', handleMove);
             this.target.style.position = 'unset';
             this.target.style.transform = 'unset';
             const move = this.getPossibleMove(event);
             this.observable.emit(move ?? null);
-            document.removeEventListener('mouseup', onEnd);
+            document.removeEventListener('mouseup', handleDragEnd);
         }
 
-        document.addEventListener('mouseup', onEnd);
+        document.addEventListener('mouseup', handleDragEnd);
         this.target.classList.add('dragging');
     }
 
