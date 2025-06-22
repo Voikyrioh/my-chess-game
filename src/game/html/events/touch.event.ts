@@ -19,7 +19,6 @@ async function checkFinalTouch(event: TouchEvent, possibleMoves: Move[]): Promis
         { x: event.changedTouches[0].clientX, y: event.changedTouches[0].clientY };
 
     const eventCase = getNearestCase(pos);
-    console.log(eventCase, pos);
     if (!eventCase) return null;
 
     const casePosition = caseToPosition(eventCase);
