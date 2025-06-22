@@ -2,21 +2,24 @@ import {type Move, type Pawn, Position} from "../../engine";
 import type {ChessPiece, Gameplay, boardColumns, boardRows} from "../../engine";
 import pieceAssets from "./assets/html-pieces-assets.ts";
 import modal from "./modals";
-import {DragAndDropEvent} from "./events/drag-and-drop.event.ts";
+import {PieceDragAndDropEvent} from "./events/piece-drag-and-drop.event.ts";
 import {getCursorPos} from "../../tools/get-cursor-pos.ts";
+import {PieceTouchEvent} from "./events/touch.event.ts";
+import {detectDevice} from "../../tools/detect-device.ts";
 
 export class GameHTML {
     static readonly colRefs = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
     #game: Gameplay;
     #htmlCases = new Map<string, HTMLDivElement>();
+    #touchEvent: PieceTouchEvent | null = null;
 
     private constructor(game: Gameplay) {
         this.#game = game;
     }
 
     private registerGlobalEvents() {
-        //document.addEventListener('touchstart', event => { this.runEvent(GameTouchEvent, event) });
+        this.#registerTouchEvent();
     }
 
     private init(app: HTMLDivElement) {
@@ -124,9 +127,8 @@ export class GameHTML {
                     }
 
                     if (boardPiece.color === this.#game.turn) {
-                        pieceElement.draggable = true;
                         pieceElement.classList.add('playable');
-                        pieceElement.ondragstart = (event) => this.handleDragEvent(event, gamePiece);
+                        this.#registerDragEvent(pieceElement, gamePiece);
                     }
 
                 } else {
@@ -140,8 +142,12 @@ export class GameHTML {
         }
     }
 
+    getPieceFromPosition(position: Position): ChessPiece | null {
+        return this.#game.getPieceFromPosition(position);
+    }
+
     private handleDragEvent(event: DragEvent, piece: ChessPiece) {
-        const subscription = new DragAndDropEvent(event, piece, this).observable.subscribe(move => {
+        const subscription = new PieceDragAndDropEvent(event, piece, this).observable.subscribe(move => {
             if (move) this.movePiece(move);
             else this.defaultClick();
 
@@ -157,5 +163,29 @@ export class GameHTML {
 
             resolve(gameHTML);
         })
+    }
+
+    #registerTouchEvent() {
+        if (detectDevice() === 'mobile') {
+            document.addEventListener('touchstart', event => {
+                if (this.#touchEvent) this.#touchEvent.detectSecondTouch(event);
+                else {
+                    this.#touchEvent = new PieceTouchEvent(event, this);
+                    this.#touchEvent.observable.subscribe(move => {
+                        if (move) {
+                            this.movePiece(move)
+                        }
+                        this.#touchEvent = null;
+                    });
+                }
+            });
+        }
+    }
+
+    #registerDragEvent(pieceElement: HTMLDivElement, gamePiece: ChessPiece) {
+        if (detectDevice() === 'desktop') {
+            pieceElement.draggable = true;
+            pieceElement.ondragstart = (event) => this.handleDragEvent(event, gamePiece);
+        }
     }
 }

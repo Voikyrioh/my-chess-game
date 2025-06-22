@@ -1,8 +1,9 @@
-import {type boardColumns, type boardRows, ChessPiece, Move, Position} from "../../../engine";
+import {ChessPiece, Move} from "../../../engine";
 import {Observable} from "../../../tools/observable.ts";
 import {GameHTML} from "../game.ts";
+import {caseToPosition, getNearestCase} from "../tools/dom-chess-utilities.ts";
 
-export class DragAndDropEvent {
+export class PieceDragAndDropEvent {
     readonly gameref: Readonly<GameHTML>;
     readonly target: HTMLDivElement;
     readonly piece: ChessPiece;
@@ -49,27 +50,9 @@ export class DragAndDropEvent {
         this.target.classList.add('dragging');
     }
 
-    getNearestCase(event: MouseEvent): HTMLDivElement|null {
-        const caseTarget = document.elementFromPoint(event.clientX, event.clientY);
-
-        if (caseTarget instanceof HTMLElement) {
-            if (caseTarget.classList.contains('case')) return caseTarget as HTMLDivElement;
-            else if (caseTarget.parentElement instanceof HTMLDivElement && caseTarget.parentElement.classList.contains('case')) return caseTarget.parentElement
-            else console.debug('Cannot find case or move not possible');
-        }
-        else console.debug('Invalid target');
-        return null;
-    }
-
-    caseToPosition(caseElement: HTMLDivElement): Position {
-        const [row, column]: string[] = caseElement.id.split('');
-
-        return new Position(column as boardColumns, Number(row) as boardRows);
-    }
-
     getPossibleMove(event: MouseEvent): Move | undefined {
-        const eventCase = this.getNearestCase(event);
+        const eventCase = getNearestCase({x: event.clientX, y: event.clientY});
         if (!eventCase) return;
-        return this.#possibleMoves.find(move => move.to.equals(this.caseToPosition(eventCase)));
+        return this.#possibleMoves.find(move => move.to.equals(caseToPosition(eventCase)));
     }
 }

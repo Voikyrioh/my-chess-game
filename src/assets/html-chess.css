@@ -32,8 +32,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: calc(min(70vw, 98vh)/8);
-            height: calc(min(70vw, 98vh)/8);
+            width: calc(min(calc(100vh - 240px), 100vw)/8);
+            height: calc(min(calc(100vh - 240px), 100vw)/8);
+            @media screen and (min-width: 90em) {
+                width: calc(min(70vw, 98vh)/8);
+                height: calc(min(70vw, 98vh)/8);
+            }
             &.playable {
                 pointer-events: all;
                 cursor: grab;
