@@ -1,0 +1,56 @@
+name: Create Release
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag of the release'
+        required: true
+        type: string
+
+jobs:
+  create_release:
+    name: Create the release on github
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ inputs.tag }}
+        run: |
+          gh release create "$tag" \
+              --repo="$GITHUB_REPOSITORY" \
+              --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
+              --generate-notes
+
+  publish_image:
+    name: build and publish docker image
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: build image
+        run: docker build . -t ghcr.io/Voikyrioh/my-chess-game:${{ inputs.tag }}
+      - name: publish image
+        run: |
+          docker login -u Voikyrioh -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
+          docker push ghcr.io/Voikyrioh/my-chess-game:${{ inputs.tag }}
+
+  deploy:
+    needs: publish_image
+    name: deploy on prod
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up SSH
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} -t rsa,ecdsa,ed25519 -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+      - name: connect and pull
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} -p ${{ secrets.SSH_PORT }} -i ~/.ssh/id_rsa -v "cd ${{ secrets.WORK_DIR }} && export CHESS_VERSION=${{ inputs.tag }} && docker-compose down && docker-compose pull && docker-compose up -d && exit"
+      - name: cleanup
+        run: rm -rf ~/.ssh
