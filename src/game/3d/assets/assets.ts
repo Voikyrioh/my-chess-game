@@ -1,6 +1,6 @@
 import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
 import type {Object3D} from "three";
-import chessAssets from "../assets/chess.glb?url";
+import chessAssets from "./chess.glb?url";
 
 type PiecesNames = "Pawn" | "King" | "Queen" | "Knight" | "Bishop" | "Rook";
 
