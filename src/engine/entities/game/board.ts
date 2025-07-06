@@ -37,6 +37,7 @@ export class Board {
         this.$board.get(move.from.toString())!.occupiedBy = null;
         this.$board.get(move.to.toString())!.occupiedBy = move.piece;
         move.piece.moveTo(move.to);
+
         if (move.type === "CASTLING") {
             if(!move.target) throw new Error("Target is not defined");
             this.$board.get(move.target.position.toString())!.occupiedBy = null;
@@ -45,13 +46,21 @@ export class Board {
             this.$board.get(newPos.toString())!.occupiedBy = move.target;
             move.target.moveTo(newPos);
         }
+
         if (move.promoteMovement && move.target) {
             this.$board.get(move.to.toString())!.occupiedBy = move.target;
             move.target.moveTo(move.to);
         }
+
         if (move.type === "EN_PASSANT") {
             if(!move.target) throw new Error("Target is not defined");
             this.$board.get(move.target.position.toString())!.occupiedBy = null
+        }
+
+        this.#clearEnPassant()
+        if (move.piece.type === 'pawn' && Math.abs(move.from.row - move.to.row) === 2) {
+            const enPassantCase = move.to.add((move.from.row - move.to.row)/2, 0)!.toString()
+            this.$board.get(enPassantCase)!.canBeEnPassant = !this.$board.get(enPassantCase)!.occupiedBy;
         }
 
         this.$history.push(move);
@@ -93,5 +102,13 @@ export class Board {
 
     export(): Map<string, BoardSquare> {
         return new Map([...this.$board.entries()].map(([_, square]) => [_, Object.assign({}, square)]));
+    }
+
+    #clearEnPassant() {
+        this.$board.forEach(square => {
+            if (square.canBeEnPassant) {
+                square.canBeEnPassant = false;
+            }
+        })
     }
 }
