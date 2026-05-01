@@ -25,6 +25,10 @@ export class Board {
         return this.$check;
     }
 
+    get history(): Array<Move> {
+        return this.$history;
+    }
+
     getFromPosition(pos: Position): ChessPiece | null {
         return this.$board.get(pos.toString())?.occupiedBy ?? null;
     }
