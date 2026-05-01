@@ -8,7 +8,8 @@ export class Gameplay {
     #playerBlack: Player;
     #board: Board;
     #turn: Player;
-    #checkmate: boolean = false;
+    #checkmate: 'black'|'white'|null = null;
+    #stalemate: boolean = false;
 
     constructor(fenString?: string) {
         const fen = new FenNotation(fenString);
@@ -34,18 +35,10 @@ export class Gameplay {
                 return;
             }
             this.#board.executeMove(move);
-            if (this.#board.check) {
-                const possibleMoves =[...this.#board.getPlayerPieces(this.#board.check).values()]
-                    .map(piece => piece.getPossibleMoves(this.#board)
-                        .filter(move => simulateMove(this.#board, move).check !== this.#board.check)
-                    )
-                    .flat();
-                if (!possibleMoves.length) {
-                    this.#checkmate = true;
-                }
-            }
-
+            this.#handleCheckmate()
+            if (this.#checkmate) return;
             this.#turn = this.#turn === this.#playerWhite ? this.#playerBlack : this.#playerWhite;
+            this.#handleStalemate()
         } else {
             console.error('not playable', {
                 rightTurn: move.piece.color === this.#turn.type,
@@ -56,8 +49,12 @@ export class Gameplay {
         }
     }
 
-    get checkmate(): boolean {
+    get checkmate(): 'black'|'white'|null {
         return this.#checkmate;
+    }
+
+    get stalemate(): boolean {
+        return this.#stalemate;
     }
 
     get turn(): 'black'|'white' {
@@ -69,14 +66,51 @@ export class Gameplay {
     }
 
     getPossibleMoves(piece: ChessPiece): PieceMovements {
-        if (this.#checkmate) return [];
+        if (this.#checkmate || this.#stalemate) return [];
         if (piece.color !== this.#turn.type) return [];
         return piece.getPossibleMoves(this.#board).filter(move => {
             return simulateMove(this.#board, move).check !== this.#turn.type
         });
     }
 
-    getCheck() {
-        return this.#board.check
+    #handleStalemate() {
+        if (!this.#checkmate) {
+            const playerPossibleMoves = [...this.#board.getPlayerPieces(this.#turn.type).values()].map(piece => {
+                return piece.getPossibleMoves(this.#board).filter(move => simulateMove(this.#board, move).check !== this.#turn.type)
+            });
+            if (!playerPossibleMoves.flat().length) {
+                this.#stalemate = true;
+            } else {
+                const history = [...this.#board.history];
+                const shortHistory = history.slice(history.length - 6);
+                if (shortHistory.find(move => move.type !== "MOVE")) {
+                    return;
+                }
+                shortHistory.map(move => `${move.piece.type}${move.from.toString()}${move.to.toString()}`)
+
+                if (history.length > 50) {
+                    const longHistory = history.slice(history.length - 50);
+                    if (!longHistory.find(move => move.type !== "MOVE")) {
+                        this.#stalemate = true;
+                        return;
+                    }
+                }
+
+            }
+        }
+    }
+
+    #handleCheckmate() {
+        if (this.#board.check) {
+            const possibleMoves =[...this.#board.getPlayerPieces(this.#board.check).values()]
+            .map(piece =>
+                piece.getPossibleMoves(this.#board)
+                    .filter(move => simulateMove(this.#board, move).check !== this.#board.check)
+            )
+            .flat();
+            if (!possibleMoves.length) {
+                this.#checkmate = this.#turn.type;
+            }
+        }
     }
 }

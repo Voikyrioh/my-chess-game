@@ -9,7 +9,6 @@ import {Knight} from "./knight.ts";
 
 export class Pawn extends ChessPiece {
     $canEatOnMove = false
-    canBeEnPassant = false;
 
     constructor(color: "white" | "black", position: Position) {
         super(position, color, 'pawn');
@@ -51,15 +50,16 @@ export class Pawn extends ChessPiece {
         const enemyPawnOnRight: Pawn|null = pieceOnRight?.type === 'pawn' && pieceOnRight.color !== this.color ? pieceOnRight as Pawn : null;
         const enemyPawnOnLeft: Pawn|null = pieceOnLeft?.type === 'pawn' && pieceOnLeft.color !== this.color ? pieceOnLeft as Pawn : null;
 
-        const pos: [Position | null, 'left'|'right'][] = this.color === 'white' ?
-            [
-                [enemyPawnOnRight?.canBeEnPassant ? this.position.add(-1,1) : null, 'right'],
-                [enemyPawnOnLeft?.canBeEnPassant ? this.position.add(-1,-1) : null, 'left']
-            ] :
-            [
-                [enemyPawnOnRight?.canBeEnPassant ? this.position.add(1,1) : null, 'right'],
-                [enemyPawnOnLeft?.canBeEnPassant ? this.position.add(1,-1) : null, 'left']
-            ];
+        const targetEnPassantRight = this.position.add(this.color === 'white' ? -1 : 1,1);
+        const targetEnPassantLeft = this.position.add(this.color === 'white' ? -1 : 1,-1);
+
+        const canEnPassantRight =  enemyPawnOnRight && targetEnPassantRight && board.getSquare(targetEnPassantRight)?.canBeEnPassant
+        const canEnPassantLeft =  enemyPawnOnLeft && targetEnPassantLeft && board.getSquare(targetEnPassantLeft)?.canBeEnPassant
+
+        const pos: [Position | null, 'left'|'right'][] = [
+            [canEnPassantRight ? targetEnPassantRight : null, 'right'],
+            [canEnPassantLeft ? targetEnPassantLeft : null, 'left']
+        ]
 
         return pos
             .filter(([pos, _]) => pos !== null)
@@ -68,11 +68,7 @@ export class Pawn extends ChessPiece {
 
     moveTo(position: Position) {
         this.isActivated = true;
-        if (Math.abs(position.row - this.position.row) === 2) {
-            this.canBeEnPassant = true;
-        } else  {
-            this.canBeEnPassant = false;
-        }
+
         this.position = position;
     }
 

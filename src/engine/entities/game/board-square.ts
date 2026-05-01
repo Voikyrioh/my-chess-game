@@ -5,6 +5,7 @@ export class BoardSquare {
     readonly position: Position;
     occupiedBy: ChessPiece | null = null;
     menacedBy: ChessPiece[] = [];
+    canBeEnPassant = false;
 
     constructor(position: Position) {
         this.position = position;

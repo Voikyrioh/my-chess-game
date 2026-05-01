@@ -111,6 +111,13 @@ export class FenNotation {
             })
         });
 
+        if (this.parsed.en_passant !== '-') {
+            const enPassantPoses = this.parsed.en_passant.split(/([a-h][1-8])/).filter(c => c !== '');
+            enPassantPoses.forEach(pos => {
+                if (squares.get(pos)) squares.get(pos)!.canBeEnPassant = true
+            })
+        }
+
         return squares;
     }
 

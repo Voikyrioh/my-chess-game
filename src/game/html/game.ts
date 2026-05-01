@@ -149,7 +149,7 @@ export class GameHTML {
             }
         })
         if (this.#game.checkmate) {
-            modal.checkmateModal(this.#game.getCheck()!).open();
+            modal.checkmateModal(this.#game.checkmate === 'white' ? 'blancs' : 'noirs').open();
         }
     }
 
