@@ -2,6 +2,10 @@ name: Release
 
 on:
   workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
     inputs:
       bump_type:
         description: "Type de release"
