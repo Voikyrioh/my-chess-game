@@ -19,6 +19,3 @@ jobs:
       app_name: my-chess-game
       bump_type: ${{ inputs.bump_type }}
     secrets: inherit
-    permissions:
-      contents: write
-      packages: write
