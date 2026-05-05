@@ -2,10 +2,6 @@ name: Release
 
 on:
   workflow_dispatch:
-
-permissions:
-  contents: write
-  packages: write
     inputs:
       bump_type:
         description: "Type de release"
@@ -15,6 +11,10 @@ permissions:
           - minor
           - major
         default: patch
+
+permissions:
+  contents: write
+  packages: write
 
 jobs:
   release:
