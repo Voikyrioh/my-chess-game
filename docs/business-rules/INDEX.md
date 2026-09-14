@@ -14,3 +14,7 @@
 - [BR-CHE-006](./BR-CHE-006-king-moves.md) — Le roi se déplace d'une case
 - [BR-CHE-007](./BR-CHE-007-castling.md) — Roque : échange roi/tour sous conditions
 - [BR-CHE-008](./BR-CHE-008-promotion.md) — Pion atteint dernière rangée = promotion
+- [BR-CHE-009](./BR-CHE-009-check.md) — Échec (check) : roi attaqué
+- [BR-CHE-010](./BR-CHE-010-checkmate.md) — Échec et mat (checkmate) : fin de partie
+- [BR-CHE-011](./BR-CHE-011-stalemate.md) — Pat (stalemate) : match nul
+- [BR-CHE-012](./BR-CHE-012-en-passant.md) — Prise en passant (en passant)
